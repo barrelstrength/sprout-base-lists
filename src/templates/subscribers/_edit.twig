@@ -2,10 +2,10 @@
 {% import '_includes/forms' as forms %}
 
 {% set crumbs = [
-    { label: "Subscribers"|t('sprout-lists'), url: url('sprout-lists/subscribers') }
+    { label: "Subscribers"|t('sprout-base-lists'), url: url('sprout-lists/subscribers') }
 ] %}
 
-{% set title = subscriber is not null ? 'Edit Subscriber'|t('sprout-lists') : 'New Subscriber'|t('sprout-lists') %}
+{% set title = subscriber is not null ? 'Edit Subscriber'|t('sprout-base-lists') : 'New Subscriber'|t('sprout-base-lists') %}
 
 {% set selectedTab    = 'lists' %}
 {% set subscriberId = subscriber is not null ? subscriber.id : null %}
@@ -16,18 +16,18 @@
 {% block actionButton %}
     <div class="buttons">
         <div class="btngroup submit">
-            <input type="submit" class="btn submit" value="{{ 'Save'|t('sprout-lists') }}">
+            <input type="submit" class="btn submit" value="{{ 'Save'|t('sprout-base-lists') }}">
 
             <div class="btn submit menubtn"></div>
             <div class="menu">
                 <ul>
                     <li><a class="formsubmit"
                            data-redirect="{{ saveShortcutRedirect|hash }}">
-                            {{ "Save and continue editing"|t('sprout-lists') }}</a>
+                            {{ "Save and continue editing"|t('sprout-base-lists') }}</a>
                     </li>
                     <li><a class="formsubmit"
                            data-redirect="{{ "sprout-lists/subscribers/new"|hash }}">
-                            {{ "Save and add another"|t('sprout-lists') }}</a>
+                            {{ "Save and add another"|t('sprout-base-lists') }}</a>
                     </li>
                 </ul>
                 <hr>
@@ -35,7 +35,7 @@
                     <li><a class="formsubmit error"
                            data-action="sprout-lists/subscribers/delete-subscriber"
                            data-confirm="Are you sure you want to delete this Subscriber?"
-                           data-redirect="{{ 'sprout-lists/subscribers'|hash }}">{{ "Delete"|t('sprout-lists') }}</a>
+                           data-redirect="{{ 'sprout-lists/subscribers'|hash }}">{{ "Delete"|t('sprout-base-lists') }}</a>
                     </li>
                 </ul>
             </div>
@@ -58,7 +58,7 @@
     <section id="default-fields">
 
         {{ forms.textField({
-            label: "Email"|t('sprout-lists'),
+            label: "Email"|t('sprout-base-lists'),
             name: 'email',
             id: 'email',
             required: true,
@@ -68,7 +68,7 @@
         }) }}
 
         {{ forms.textField({
-            label: "First Name"|t('sprout-lists'),
+            label: "First Name"|t('sprout-base-lists'),
             name: 'firstName',
             id: 'firstName',
             value: subscriber is not null ? subscriber.firstName : null,
@@ -76,7 +76,7 @@
         }) }}
 
         {{ forms.textField({
-            label: "Last Name"|t('sprout-lists'),
+            label: "Last Name"|t('sprout-base-lists'),
             name: 'lastName',
             id: 'lastName',
             value: subscriber is not null ? subscriber.lastName : null,
@@ -101,15 +101,15 @@
 
         {% else %}
 
-            <p>{{ "Setup your Subscriber Lists and they will display below."|t('sprout-lists') }}</p>
+            <p>{{ "Setup your Subscriber Lists and they will display below."|t('sprout-base-lists') }}</p>
 
             <ul>
                 <li><input type="checkbox" class="checkbox" disabled>
-                    <label>{{ "List One"|t('sprout-lists') }}</label></li>
+                    <label>{{ "List One"|t('sprout-base-lists') }}</label></li>
                 <li><input type="checkbox" class="checkbox" disabled>
-                    <label>{{ "List Two"|t('sprout-lists') }}</label></li>
+                    <label>{{ "List Two"|t('sprout-base-lists') }}</label></li>
                 <li><input type="checkbox" class="checkbox" disabled>
-                    <label>{{ "List Three"|t('sprout-lists') }}</label></li>
+                    <label>{{ "List Three"|t('sprout-base-lists') }}</label></li>
             </ul>
 
         {% endif %}
