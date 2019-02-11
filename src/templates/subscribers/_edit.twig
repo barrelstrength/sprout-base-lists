@@ -89,32 +89,35 @@
 
     <div class="meta">
 
-    {% for listType in listTypes %}
+        {% for listType in listTypes %}
 
-        {% set subscriberListsHtml = listType.getSubscriberListsHtml(subscriberId) %}
+            {% set subscriberListsHtml = listType.getSubscriberListsHtml(subscriberId) %}
 
-        {% if subscriberListsHtml != '' %}
+            {% if subscriberListsHtml != '' %}
 
-            <h2>{{ listType.name }}</h2>
+                <h2>{{ listType.name }}</h2>
 
-            {{ subscriberListsHtml }}
+                {{ subscriberListsHtml }}
 
-        {% else %}
+            {% else %}
 
-            <p>{{ "Setup your Subscriber Lists and they will display below."|t('sprout-base-lists') }}</p>
+                <p>{{ "Setup your Subscriber Lists and they will display below."|t('sprout-base-lists') }}</p>
 
-            <ul>
-                <li><input type="checkbox" class="checkbox" disabled>
-                    <label>{{ "List One"|t('sprout-base-lists') }}</label></li>
-                <li><input type="checkbox" class="checkbox" disabled>
-                    <label>{{ "List Two"|t('sprout-base-lists') }}</label></li>
-                <li><input type="checkbox" class="checkbox" disabled>
-                    <label>{{ "List Three"|t('sprout-base-lists') }}</label></li>
-            </ul>
+                <ul>
+                    <li><input type="checkbox" class="checkbox" disabled>
+                        <label>{{ "List One"|t('sprout-base-lists') }}</label>
+                    </li>
+                    <li><input type="checkbox" class="checkbox" disabled>
+                        <label>{{ "List Two"|t('sprout-base-lists') }}</label>
+                    </li>
+                    <li><input type="checkbox" class="checkbox" disabled>
+                        <label>{{ "List Three"|t('sprout-base-lists') }}</label>
+                    </li>
+                </ul>
 
-        {% endif %}
+            {% endif %}
 
-    {% endfor %}
+        {% endfor %}
 
     </div>
 
