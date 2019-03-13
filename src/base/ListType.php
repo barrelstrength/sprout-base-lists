@@ -99,4 +99,13 @@ abstract class ListType extends Component
      * @return mixed
      */
     abstract public function saveList(SubscriberList $list);
+
+    /**
+     * Additional event method for modifying subscribers before saving it on control panel only
+     * @return null
+     */
+    public function cpBeforeSaveSubscriber($subscriber)
+    {
+        return null;
+    }
 }
