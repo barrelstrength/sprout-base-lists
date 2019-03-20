@@ -8,6 +8,7 @@ use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
+use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\helpers\Template;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
