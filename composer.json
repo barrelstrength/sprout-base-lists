@@ -1,7 +1,7 @@
 {
   "name": "barrelstrength/sprout-base-lists",
   "description": "Common lists libraries for Sprout Plugins for Craft CMS",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "yii-module",
   "license": "proprietary",
   "authors": [
@@ -18,7 +18,8 @@
     "rss": "https://github.com/barrelstrength/sprout-base/commits/v2.atom"
   },
   "require": {
-    "craftcms/cms": "^3.1.0"
+    "craftcms/cms": "^3.1.0",
+    "barrelstrength/sprout-base": "^4.0.7"
   },
   "autoload": {
     "psr-4": {

@@ -45,7 +45,7 @@
 
 {% block content %}
 
-    <input type="hidden" id="action" name="action" value="sprout-lists/subscribers/save-subscriber">
+    <input type="hidden" id="action" name="action" value="sprout-base-lists/subscribers/save-subscriber">
     {{ redirectInput("sprout-lists/subscribers") }}
 
     {% if subscriber is not null %}
@@ -53,7 +53,7 @@
     {% endif %}
 
     <input type="hidden" name="type"
-           value="barrelstrength\sproutlists\listtypes\SubscriberListType">
+           value="barrelstrength\sproutbaselists\listtypes\SubscriberListType">
 
     <section id="default-fields">
 

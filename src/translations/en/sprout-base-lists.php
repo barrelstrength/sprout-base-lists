@@ -37,7 +37,7 @@ return [
     'Add List' => 'Add List',
     'Enable User Sync' => 'Enable User Sync',
     'How you’ll refer to this list in your templates.' => 'How you’ll refer to this list in your templates.',
-    'Create SubscriberList Automatically' => 'Create SubscriberList Automatically',
+    'Create Subscriber List Automatically' => 'Create Subscriber List Automatically',
     'New Subscriber' => 'New Subscriber',
     'Save and add another' => 'Save and add another',
     'Save and continue editing' => 'Save and continue editing',

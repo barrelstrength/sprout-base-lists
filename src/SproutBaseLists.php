@@ -8,6 +8,17 @@
 namespace barrelstrength\sproutbaselists;
 
 use barrelstrength\sproutbase\base\BaseSproutTrait;
+use barrelstrength\sproutbaselists\controllers\ListsController;
+use barrelstrength\sproutbaselists\controllers\SubscribersController;
+use barrelstrength\sproutbaselists\events\RegisterListTypesEvent;
+use barrelstrength\sproutbaselists\listtypes\SubscriberListType;
+use barrelstrength\sproutbaselists\services\App;
+use barrelstrength\sproutbaselists\services\Lists;
+use barrelstrength\sproutbaselists\web\twig\extensions\TwigExtensions;
+use barrelstrength\sproutbaselists\web\twig\variables\SproutListsVariable;
+use craft\events\ElementEvent;
+use craft\services\Elements;
+use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use \yii\base\Module;
 use craft\web\View;
@@ -19,6 +30,13 @@ use Craft;
 class SproutBaseLists extends Module
 {
     use BaseSproutTrait;
+
+    /**
+     * Enable use of SproutBaseLists::$app-> in place of Craft::$app->
+     *
+     * @var \barrelstrength\sproutbaselists\services\App
+     */
+    public static $app;
 
     /**
      * @var string
@@ -80,6 +98,8 @@ class SproutBaseLists extends Module
 
     public function init()
     {
+        self::$app = new App();
+
         Craft::setAlias('@sproutbaselists', $this->getBasePath());
 
         // Setup Controllers
@@ -87,11 +107,34 @@ class SproutBaseLists extends Module
             $this->controllerNamespace = 'sproutbaselists\\console\\controllers';
         } else {
             $this->controllerNamespace = 'sproutbaselists\\controllers';
+
+            $this->controllerMap = [
+                'lists' => ListsController::class,
+                'subscribers' => SubscribersController::class
+            ];
         }
+
+        Craft::$app->view->registerTwigExtension(new TwigExtensions());
+
+        Event::on(Lists::class, Lists::EVENT_REGISTER_LIST_TYPES, function(RegisterListTypesEvent $event) {
+            $event->listTypes[] = SubscriberListType::class;
+        });
 
         // Setup Template Roots
         Event::on(View::class, View::EVENT_REGISTER_CP_TEMPLATE_ROOTS, function(RegisterTemplateRootsEvent $e) {
             $e->roots['sprout-base-lists'] = $this->getBasePath().DIRECTORY_SEPARATOR.'templates';
+        });
+
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
+            $event->sender->set('sproutLists', SproutListsVariable::class);
+        });
+
+        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {
+            SproutBaseLists::$app->subscribers->handleUpdateUserIdOnSaveEvent($event);
+        });
+
+        Event::on(Elements::class, Elements::EVENT_AFTER_DELETE_ELEMENT, function(ElementEvent $event) {
+            SproutBaseLists::$app->subscribers->handleUpdateUserIdOnDeleteEvent($event);
         });
 
         parent::init();

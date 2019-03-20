@@ -2,9 +2,9 @@
 
 namespace barrelstrength\sproutbaselists\base;
 
-use barrelstrength\sproutlists\elements\SubscriberList;
-use barrelstrength\sproutlists\elements\Subscriber;
-use barrelstrength\sproutlists\models\Subscription;
+use barrelstrength\sproutbaselists\elements\SubscriberList;
+use barrelstrength\sproutbaselists\elements\Subscriber;
+use barrelstrength\sproutbaselists\models\Subscription;
 use craft\base\Component;
 
 /**
