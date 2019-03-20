@@ -163,7 +163,7 @@ class SproutListsVariable
      *
      * @return array
      */
-    private function flattenArray(array $array)
+    private function flattenArray(array $array): array
     {
         $return = [];
         array_walk_recursive($array, function($a) use (&$return) {

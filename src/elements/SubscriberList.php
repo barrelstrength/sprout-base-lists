@@ -214,7 +214,7 @@ class SubscriberList extends Element
         $record->save(false);
 
         // Update the entry's descendants, who may be using this entry's URI in their own URIs
-        Craft::$app->getElements()->updateElementSlugAndUri($this, true, true);
+        Craft::$app->getElements()->updateElementSlugAndUri($this);
 
         parent::afterSave($isNew);
     }

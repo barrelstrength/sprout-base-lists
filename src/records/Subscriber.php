@@ -40,6 +40,7 @@ class Subscriber extends ActiveRecord
 
     /**
      * @return ActiveQueryInterface
+     * @throws \yii\base\InvalidConfigException
      */
     public function getLists(): ActiveQueryInterface
     {

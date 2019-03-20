@@ -93,13 +93,13 @@ class ListsController extends Controller
             $session->setNotice(Craft::t('sprout-lists', 'List saved.'));
 
             return $this->redirectToPostedUrl();
-        } else {
-            $session->setError(Craft::t('sprout-lists', 'Unable to save list.'));
-
-            Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
-            ]);
         }
+
+        $session->setError(Craft::t('sprout-lists', 'Unable to save list.'));
+
+        Craft::$app->getUrlManager()->setRouteParams([
+            'list' => $list
+        ]);
 
         return null;
     }

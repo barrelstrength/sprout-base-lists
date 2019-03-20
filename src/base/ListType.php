@@ -101,7 +101,7 @@ abstract class ListType extends Component
     abstract public function saveList(SubscriberList $list);
 
     /**
-     * Additional event method for modifying subscribers before saving it on control panel only
+     * @param $subscriber
      *
      * @return null
      */

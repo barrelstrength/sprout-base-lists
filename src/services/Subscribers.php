@@ -7,7 +7,6 @@ use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\elements\Subscriber;
-use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Component;
 use craft\elements\User;
 use craft\events\ElementEvent;

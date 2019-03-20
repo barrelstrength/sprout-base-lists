@@ -2,6 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\listtypes;
 
+use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\SubscriberList;
 use barrelstrength\sproutbaselists\elements\Subscriber;
@@ -56,6 +57,7 @@ class SubscriberListType extends ListType
      * @param Subscriber $subscriber
      *
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     public function getLists(Subscriber $subscriber = null): array
     {
@@ -104,9 +106,10 @@ class SubscriberListType extends ListType
     /**
      * Get the total number of lists for a given subscriber
      *
-     * @param Subscriber $subscriber
+     * @param Subscriber|null $subscriber
      *
      * @return int
+     * @throws \yii\base\InvalidConfigException
      */
     public function getListCount(Subscriber $subscriber = null): int
     {
@@ -131,6 +134,7 @@ class SubscriberListType extends ListType
      * Returns an array of all lists that have subscribers.
      *
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     public function getListsWithSubscribers(): array
     {
@@ -173,11 +177,9 @@ class SubscriberListType extends ListType
         ])->one();
 
         $list = new SubscriberList();
-        /**
-         * @var $settings Settings
-         */
-        /** @noinspection NullPointerExceptionInspection */
-        $settings = Craft::$app->plugins->getPlugin('sprout-lists')->getSettings();
+
+        /** @var Settings $settings */
+        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 
         // If no List exists, dynamically create one
         if ($listRecord) {
@@ -218,9 +220,8 @@ class SubscriberListType extends ListType
      */
     public function subscribe(Subscription $subscription): bool
     {
-        /** @var SproutLists $plugin */
-        $plugin = Craft::$app->plugins->getPlugin('sprout-lists');
-        $settings = $plugin->getSettings();
+        /** @var Settings $settings */
+        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 
         $subscriber = new Subscriber();
 
@@ -245,7 +246,7 @@ class SubscriberListType extends ListType
             $list = $this->getOrCreateList($subscription);
 
             // If our Subscriber doesn't exist, create a Subscriber Element on the fly
-            $subscriber = $this->getSubscriber($subscriber, $settings->enableUserSync, $subscription);
+            $subscriber = $this->getSubscriber($subscriber, $subscription, $settings->enableUserSync);
 
             if ($subscription->getErrors()) {
                 return false;
@@ -278,11 +279,8 @@ class SubscriberListType extends ListType
      */
     public function unsubscribe(Subscription $subscription): bool
     {
-        /**
-         * @var Settings $settings
-         */
-        /** @noinspection NullPointerExceptionInspection */
-        $settings = Craft::$app->plugins->getPlugin('sprout-lists')->getSettings();
+        /** @var Settings $settings */
+        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 
         $listAttributes = [
             'type' => $subscription->listType,
@@ -360,11 +358,8 @@ class SubscriberListType extends ListType
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `userId` or `email` are required by the isSubscribed variable'));
         }
 
-        /**
-         * @var $settings Settings
-         */
-        /** @noinspection NullPointerExceptionInspection */
-        $settings = Craft::$app->plugins->getPlugin('sprout-lists')->getSettings();
+        /** @var Settings $settings */
+        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 
         // however, if User Sync is not enabled, we need an email
         if ($settings && $settings->enableUserSync === true && $subscription->email === null) {
@@ -515,7 +510,7 @@ class SubscriberListType extends ListType
      * @throws \craft\errors\ElementNotFoundException
      */
 
-    public function getSubscriber(Subscriber $subscriber, $sync = false, Subscription $subscription)
+    public function getSubscriber(Subscriber $subscriber, Subscription $subscription, $sync = false)
     {
         $attributes = array_filter([
             'email' => $subscriber->email,
@@ -565,7 +560,7 @@ class SubscriberListType extends ListType
      */
     public function getSubscriberById($id)
     {
-        return Craft::$app->getElements()->getElementById($id);
+        return Craft::$app->getElements()->getElementById($id, Subscriber::class);
     }
 
     /**
@@ -573,13 +568,13 @@ class SubscriberListType extends ListType
      *
      * @param $id
      *
-     * @return SubscriptionRecord
+     * @return Subscriber
      * @throws \Throwable
      */
     public function deleteSubscriberById($id): Subscriber
     {
         /**
-         * @var $subscriber SubscriptionRecord
+         * @var $subscriber Subscriber
          */
         $subscriber = $this->getSubscriberById($id);
 

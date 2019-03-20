@@ -2,6 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\elements;
 
+use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\base\ListType;
 
 use barrelstrength\sproutbaselists\elements\actions\DeleteSubscriber;
@@ -197,7 +198,7 @@ class Subscriber extends Element
     public function getUrl()
     {
         if ($this->uri !== null) {
-            return UrlHelper::siteUrl($this->uri, null, null);
+            return UrlHelper::siteUrl($this->uri);
         }
 
         return null;
@@ -277,11 +278,8 @@ class Subscriber extends Element
      */
     public function afterSave(bool $isNew)
     {
-        /**
-         * @var Settings $settings
-         */
-        /** @noinspection NullPointerExceptionInspection */
-        $settings = Craft::$app->plugins->getPlugin('sprout-lists')->getSettings();
+        /** @var Settings $settings */
+        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 
         if (!$settings) {
             parent::afterSave($isNew);

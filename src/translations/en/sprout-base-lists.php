@@ -50,5 +50,7 @@ return [
     'Subscribers' => 'Subscribers',
     'Date Created' => 'Date Created',
     'List Two' => 'List Two',
-    'List Name' => 'List Name'
+    'List Name' => 'List Name',
+    'Create SubscriberList Automatically' => 'Create SubscriberList Automatically',
+    'When you enable this setting Sprout Lists will create a relationship between a Sprout Subscriber and a matching Craft User, based on the email address. When Craft User emails are updated, they will also be updated for Sprout Subscribers. When emails are updated for a Sprout Subscriber, they will also be updated in the matching Craft User profiles. When Users are deleted the relationship in the Sprout Subscriber and the Craft User will be removed.' => 'When you enable this setting Sprout Lists will create a relationship between a Sprout Subscriber and a matching Craft User, based on the email address. When Craft User emails are updated, they will also be updated for Sprout Subscribers. When emails are updated for a Sprout Subscriber, they will also be updated in the matching Craft User profiles. When Users are deleted the relationship in the Sprout Subscriber and the Craft User will be removed.'
 ];
