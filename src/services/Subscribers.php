@@ -20,7 +20,8 @@ class Subscribers extends Component
      *
      * @throws \Throwable
      */
-    public function handleUpdateUserIdOnSaveEvent(ElementEvent $event) {
+    public function handleUpdateUserIdOnSaveEvent(ElementEvent $event)
+    {
         /** @var Settings $settings */
         $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 
@@ -34,7 +35,8 @@ class Subscribers extends Component
      *
      * @throws \Throwable
      */
-    public function handleUpdateUserIdOnDeleteEvent(ElementEvent $event) {
+    public function handleUpdateUserIdOnDeleteEvent(ElementEvent $event)
+    {
         /** @var Settings $settings */
         $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
 

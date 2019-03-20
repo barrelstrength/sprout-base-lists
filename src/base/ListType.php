@@ -102,6 +102,7 @@ abstract class ListType extends Component
 
     /**
      * Additional event method for modifying subscribers before saving it on control panel only
+     *
      * @return null
      */
     public function cpBeforeSaveSubscriber($subscriber)

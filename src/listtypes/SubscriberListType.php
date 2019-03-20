@@ -504,6 +504,7 @@ class SubscriberListType extends ListType
 
     /**
      * Gets a subscriber
+     *
      * @param Subscriber   $subscriber
      * @param bool         $sync
      * @param Subscription $subscription
