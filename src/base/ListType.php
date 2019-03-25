@@ -2,8 +2,10 @@
 
 namespace barrelstrength\sproutbaselists\base;
 
+use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\elements\SubscriberList;
 use barrelstrength\sproutbaselists\elements\Subscriber;
+use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\models\Subscription;
 use craft\base\Component;
 
@@ -13,6 +15,18 @@ use craft\base\Component;
  */
 abstract class ListType extends Component
 {
+    /**
+     * @var Settings $settings
+     */
+    public $settings;
+
+    public function init()
+    {
+        $this->settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
+
+        parent::init();
+    }
+
     /**
      * Returns the class name of this List Type
      *
