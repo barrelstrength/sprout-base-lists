@@ -7,7 +7,7 @@ use barrelstrength\sproutbaselists\base\ListType;
 
 use barrelstrength\sproutbaselists\elements\actions\DeleteSubscriber;
 use barrelstrength\sproutbaselists\elements\db\SubscriberQuery;
-use barrelstrength\sproutbaselists\listtypes\SubscriberListType;
+use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
@@ -45,6 +45,11 @@ class Subscriber extends Element
      * @var string
      */
     public $lastName;
+
+    /**
+     * @var int
+     */
+    public $elementId;
 
     /**
      * @var int
@@ -120,20 +125,20 @@ class Subscriber extends Element
         $sources = [
             [
                 'key' => '*',
-                'label' => Craft::t('sprout-lists', 'All Lists')
+                'label' => Craft::t('sprout-lists', 'All Subscribers')
             ]
         ];
 
-        $listType = SproutBaseLists::$app->lists->getListType(SubscriberListType::class);
+        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
 
         /**
-         * @var ListType|SubscriberListType $listType
+         * @var ListType|MailingList $listType
          */
         $lists = $listType->getListsWithSubscribers();
 
         if (!empty($lists)) {
             $sources[] = [
-                'heading' => $listType->getName()
+                'heading' => $listType->displayName()
             ];
 
             foreach ($lists as $list) {
@@ -241,7 +246,7 @@ class Subscriber extends Element
             'subscriberId' => $this->id
         ])->all();
 
-        $listType = SproutBaseLists::$app->lists->getListType(SubscriberListType::class);
+        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
 
         if (count($subscriptions)) {
             /** @var Subscription $subscription */
@@ -279,7 +284,7 @@ class Subscriber extends Element
     public function afterSave(bool $isNew)
     {
         /** @var Settings $settings */
-        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
+        $settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
 
         if (!$settings) {
             parent::afterSave($isNew);

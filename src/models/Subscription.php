@@ -21,7 +21,17 @@ class Subscription extends Model
     /**
      * @var int
      */
-    public $subscriberId;
+    public $elementId;
+
+//    /**
+//     * @var int
+//     */
+//    public $subscriberId;
+//
+//    /**
+//     * @var int
+//     */
+//    public $itemId;
 
     /**
      * @var DateTime|null
@@ -43,15 +53,10 @@ class Subscription extends Model
      */
     public $listHandle;
 
-    /**
-     * @var int
-     */
-    public $elementId;
-
-    /**
-     * @var int
-     */
-    public $userId;
+//    /**
+//     * @var int
+//     */
+//    public $userId;
 
     /**
      * @var string

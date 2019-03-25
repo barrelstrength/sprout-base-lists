@@ -4,7 +4,7 @@ namespace barrelstrength\sproutbaselists\controllers;
 
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\Subscriber;
-use barrelstrength\sproutbaselists\listtypes\SubscriberListType;
+use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\web\Controller;
 use Craft;
@@ -23,7 +23,7 @@ class SubscribersController extends Controller
      */
     public function actionEditSubscriberTemplate($id = null, $subscriber = null): Response
     {
-        $listType = SproutBaseLists::$app->lists->getListType(SubscriberListType::class);
+        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
         $listTypes[] = $listType;
 
         if ($id != null AND $subscriber == null) {
@@ -68,7 +68,7 @@ class SubscribersController extends Controller
         /**
          * @todo - Abstract to add support for saveSubscriber via other ListTypes
          *
-         * @var ListType|SubscriberListType $listType
+         * @var ListType|MailingList $listType
          */
         $listType = SproutBaseLists::$app->lists->getListType($type);
 

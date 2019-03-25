@@ -3,7 +3,7 @@
 namespace barrelstrength\sproutbaselists\elements\actions;
 
 use barrelstrength\sproutbaselists\elements\Subscriber;
-use barrelstrength\sproutbaselists\listtypes\SubscriberListType;
+use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\elements\actions\Delete;
@@ -42,7 +42,7 @@ class DeleteSubscriber extends Delete
          */
         $subscribers = $query->all();
 
-        $listType = SproutBaseLists::$app->lists->getListType(SubscriberListType::class);
+        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
 
         // Delete the users
         foreach ($subscribers as $subscriber) {

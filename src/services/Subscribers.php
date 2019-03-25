@@ -22,7 +22,7 @@ class Subscribers extends Component
     public function handleUpdateUserIdOnSaveEvent(ElementEvent $event)
     {
         /** @var Settings $settings */
-        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
+        $settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
 
         if ($settings->enableUserSync && $event->element instanceof User) {
             $this->updateUserIdOnSave($event);
@@ -37,7 +37,7 @@ class Subscribers extends Component
     public function handleUpdateUserIdOnDeleteEvent(ElementEvent $event)
     {
         /** @var Settings $settings */
-        $settings = SproutBase::$app->settings->getSettingsByPriority('sprout-lists');
+        $settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
 
         if ($settings->enableUserSync && $event->element instanceof User) {
             $this->updateUserIdOnDelete($event);

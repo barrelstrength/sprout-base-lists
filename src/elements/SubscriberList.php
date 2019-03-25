@@ -49,7 +49,7 @@ class SubscriberList extends Element
      */
     public static function displayName(): string
     {
-        return Craft::t('sprout-lists', 'Sprout SubscriberList');
+        return Craft::t('sprout-lists', 'List');
     }
 
     /**
@@ -97,7 +97,7 @@ class SubscriberList extends Element
         $sources = [
             [
                 'key' => '*',
-                'label' => Craft::t('sprout-lists', 'All Subscriber Lists')
+                'label' => Craft::t('sprout-lists', 'All lists')
             ]
         ];
 
@@ -203,8 +203,9 @@ class SubscriberList extends Element
         } else {
             $record = new ListsRecord();
             $record->id = $this->id;
-            // Assign current listId for newly created list
-            $record->elementId = $this->id;
+
+            // Fallback and assign the current listId if no elementId is provided
+            $record->elementId = $this->elementId ?? $this->id;
         }
 
         $record->type = $this->type;

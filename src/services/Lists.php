@@ -4,7 +4,7 @@ namespace barrelstrength\sproutbaselists\services;
 
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\events\RegisterListTypesEvent;
-use barrelstrength\sproutbaselists\listtypes\SubscriberListType;
+use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\records\Subscription;
 use craft\base\Component;
 use barrelstrength\sproutbaselists\records\SubscriberList as ListsRecord;
@@ -78,22 +78,27 @@ class Lists extends Component
     }
 
     /**
-     * @param $listHandle
+     * @param $listId
      *
-     * @return SubscriberListType
+     * @return MailingList
      */
-    public function getListTypeByHandle($listHandle): SubscriberListType
+    public function getListTypeById($listId): MailingList
     {
-        /** @var ListsRecord $list */
-        $list = ListsRecord::find()->where([
-            'handle' => $listHandle
-        ])->one();
+        $listRecord = null;
 
-        if ($list === null) {
-            return new SubscriberListType();
+        if (is_int($listId)) {
+            $listRecord = ListsRecord::findOne($listId);
+        } else if (is_string($listId)) {
+            $listRecord = ListsRecord::find()->where([
+                    'handle' => $listId
+                ])->one();
         }
 
-        return new $list->type;
+        if ($listRecord === null) {
+            return new MailingList();
+        }
+
+        return new $listRecord->type;
     }
 
     /**

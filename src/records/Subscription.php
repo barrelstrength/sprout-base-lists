@@ -10,6 +10,7 @@ use craft\db\ActiveRecord;
  * @property int $id
  * @property int $listId
  * @property int $subscriberId
+ * @property int $itemId
  */
 class Subscription extends ActiveRecord
 {
