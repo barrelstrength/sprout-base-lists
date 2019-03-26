@@ -12,6 +12,8 @@
 
 {% if listHandle is defined %}
     {% js %}
-        window.defaultSectionHandle = '{{ listHandle }}';
+        window.listHandle = '{{ listHandle }}';
     {% endjs %}
 {% endif %}
+
+{% do view.registerAssetBundle("barrelstrength\\sproutbaselists\\web\\assets\\sproutlist\\ListAsset") %}

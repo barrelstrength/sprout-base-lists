@@ -39,14 +39,14 @@ class SubscribersController extends Controller
     /**
      * Saves a subscriber
      *
-     * @return Response
+     * @return Response | null
      * @throws \Throwable
      * @throws \craft\errors\ElementNotFoundException
      * @throws \craft\errors\MissingComponentException
      * @throws \yii\base\Exception
      * @throws \yii\web\BadRequestHttpException
      */
-    public function actionSaveSubscriber(): Response
+    public function actionSaveSubscriber()
     {
         $this->requirePostRequest();
 
@@ -80,6 +80,8 @@ class SubscribersController extends Controller
             Craft::$app->getUrlManager()->setRouteParams([
                 'subscriber' => $subscriber
             ]);
+
+            return null;
         }
 
         Craft::$app->getSession()->setNotice(Craft::t('sprout-lists', 'Subscriber saved.'));

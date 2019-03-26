@@ -4,7 +4,6 @@ namespace barrelstrength\sproutbaselists\elements;
 
 use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\base\ListType;
-
 use barrelstrength\sproutbaselists\elements\actions\DeleteSubscriber;
 use barrelstrength\sproutbaselists\elements\db\SubscriberQuery;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
@@ -12,6 +11,7 @@ use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
+use barrelstrength\sproutbaselists\web\assets\sproutlist\ListAsset;
 use craft\base\Element;
 use Craft;
 use craft\elements\db\ElementQueryInterface;

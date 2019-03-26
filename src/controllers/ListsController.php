@@ -95,7 +95,7 @@ class ListsController extends Controller
 
         $list = new SubscriberList();
 
-        if ($listId !== null) {
+        if ($listId !== null && $listId !== '') {
             $list = Craft::$app->getElements()->getElementById($listId);
         }
 
