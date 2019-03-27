@@ -155,7 +155,7 @@ class Subscribers extends Component
     {
         if (Craft::$app->getElements()->deleteElementById($id)) {
             SubscribersRecord::deleteAll('id = :subscriberId', [':subscriberId' => $id]);
-            Subscription::deleteAll('subscriberId = :subscriberId', [':subscriberId' => $id]);
+            Subscription::deleteAll('listId = :listId', [':listId' => $id]);
         }
     }
 }

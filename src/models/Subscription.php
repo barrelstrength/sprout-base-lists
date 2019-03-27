@@ -14,36 +14,6 @@ class Subscription extends Model
     public $id;
 
     /**
-     * @var int
-     */
-    public $listId;
-
-    /**
-     * @var int
-     */
-    public $elementId;
-
-//    /**
-//     * @var int
-//     */
-//    public $subscriberId;
-//
-//    /**
-//     * @var int
-//     */
-//    public $itemId;
-
-    /**
-     * @var DateTime|null
-     */
-    public $dateCreated;
-
-    /**
-     * @var DateTime|null
-     */
-    public $dateUpdated;
-
-    /**
      * @var ListType
      */
     public $listType;
@@ -53,10 +23,15 @@ class Subscription extends Model
      */
     public $listHandle;
 
-//    /**
-//     * @var int
-//     */
-//    public $userId;
+    /**
+     * @var int
+     */
+    public $listId;
+
+    /**
+     * @var int
+     */
+    public $itemId;
 
     /**
      * @var string
@@ -72,4 +47,14 @@ class Subscription extends Model
      * @var string
      */
     public $lastName;
+
+    /**
+     * @var DateTime|null
+     */
+    public $dateCreated;
+
+    /**
+     * @var DateTime|null
+     */
+    public $dateUpdated;
 }

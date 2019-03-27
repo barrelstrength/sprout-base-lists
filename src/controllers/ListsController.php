@@ -20,8 +20,8 @@ class ListsController extends Controller
      * @var array
      */
     protected $allowAnonymous = [
-        'actionSubscribe',
-        'actionUnsubscribe'
+        'actionAdd',
+        'actionRemove'
     ];
 
     /**
@@ -31,7 +31,6 @@ class ListsController extends Controller
      */
     public function actionListsIndexTemplate(string $pluginHandle): Response
     {
-
         return $this->renderTemplate('sprout-base-lists/lists/index', [
             'pluginHandle' => $pluginHandle
         ]);
@@ -169,14 +168,14 @@ class ListsController extends Controller
      * @throws \yii\base\Exception
      * @throws \yii\web\BadRequestHttpException
      */
-    public function actionSubscribe()
+    public function actionAdd()
     {
         $this->requirePostRequest();
 
         $subscription = new Subscription();
         $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId', Craft::$app->getUser()->getIdentity()->id);
         $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
-        $subscription->elementId = Craft::$app->getRequest()->getBodyParam('elementId');
+        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
         $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
         $subscription->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
         $subscription->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
@@ -185,7 +184,7 @@ class ListsController extends Controller
         /** @var ListType $listType */
         $listType = new $listTypeClass();
 
-        if (!$listType->subscribe($subscription)) {
+        if (!$listType->add($subscription)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([
                     'success' => false,
@@ -215,21 +214,21 @@ class ListsController extends Controller
      * @return Response|null
      * @throws \yii\web\BadRequestHttpException
      */
-    public function actionUnsubscribe()
+    public function actionRemove()
     {
         $this->requirePostRequest();
 
         $subscription = new Subscription();
         $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
         $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
-        $subscription->elementId = Craft::$app->getRequest()->getBodyParam('elementId');
+        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
         $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
         $listTypeClass = Craft::$app->getRequest()->getBodyParam('listType', MailingList::class);
 
         /** @var ListType $listType */
         $listType = new $listTypeClass();
 
-        if (!$listType->unsubscribe($subscription)) {
+        if (!$listType->remove($subscription)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([
                     'success' => false,

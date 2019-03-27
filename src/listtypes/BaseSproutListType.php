@@ -9,6 +9,7 @@ use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
+use craft\base\Element;
 use craft\helpers\Template;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\records\SubscriberList as SubscriberListRecord;
@@ -167,8 +168,9 @@ abstract class BaseSproutListType extends ListType
 
                     if ($list) {
                         $subscriptionRecord = new SubscriptionRecord();
-                        $subscriptionRecord->subscriberId = $subscriber->id;
                         $subscriptionRecord->listId = $list->id;
+                        $subscriptionRecord->itemId = $subscriber->id;
+
 
                         if (!$subscriptionRecord->save(false)) {
 
@@ -451,8 +453,8 @@ abstract class BaseSproutListType extends ListType
 
     public function cpBeforeSaveSubscriber($subscriber)
     {
-        SubscriptionRecord::deleteAll('subscriberId = :subscriberId', [
-            ':subscriberId' => $subscriber->id
+        SubscriptionRecord::deleteAll('itemId = :itemId', [
+            ':itemId' => $subscriber->id
         ]);
 
         return null;

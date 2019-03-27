@@ -44,7 +44,7 @@ abstract class ListType extends Component
      *
      * @return bool
      */
-    abstract public function subscribe(Subscription $subscription): bool;
+    abstract public function add(Subscription $subscription): bool;
 
     /**
      * Unsubscribe a user from a list for this List Type
@@ -53,7 +53,7 @@ abstract class ListType extends Component
      *
      * @return bool
      */
-    abstract public function unsubscribe(Subscription $subscription): bool;
+    abstract public function remove(Subscription $subscription): bool;
 
     /**
      * Check if a user is subscribed to a list
@@ -62,7 +62,7 @@ abstract class ListType extends Component
      *
      * @return bool
      */
-    abstract public function isSubscribed(Subscription $subscription): bool;
+    abstract public function isOnList(Subscription $subscription): bool;
 
     /**
      * Return all lists for a given subscriber.

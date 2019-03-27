@@ -10,14 +10,6 @@ use \Twig_Extension;
 class TwigExtensions extends Twig_Extension
 {
     /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return 'Sprout Lists';
-    }
-
-    /**
      * Makes the filters available to the template context
      *
      * @return array|\Twig_Filter[]

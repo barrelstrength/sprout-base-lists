@@ -20,20 +20,18 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function getIsSubscribed(array $criteria = [])
+    public function getIsOnList(array $criteria = [])
     {
         $subscription = new Subscription();
         $subscription->listType = $criteria['listType'] ?? MailingList::class;
-//        $subscription->listHandle = $criteria['listHandle'] ?? null;
         $subscription->listId = $criteria['listId'] ?? null;
-        $subscription->elementId = $criteria['elementId'] ?? null;
-//        $subscription->userId = $criteria['userId'] ?? null;
+        $subscription->listHandle = $criteria['listHandle'] ?? null;
+        $subscription->itemId = $criteria['itemId'] ?? null;
         $subscription->email = $criteria['email'] ?? null;
-//        $subscription->subscriberId = $criteria['subscriberId'] ?? null;
 
         $listType = SproutBaseLists::$app->lists->getListType($subscription->listType);
 
-        return $listType->isSubscribed($subscription);
+        return $listType->isOnList($subscription);
     }
 
     /**
@@ -52,12 +50,13 @@ class SproutListsVariable
     public function getLists(array $criteria = [])
     {
         $subscriber = new Subscriber();
-        $listType = $criteria['listType'] ?? MailingList::class;
-        $subscriber->listType = $listType;
+        $subscriber->id = $criteria['subscriberId'] ?? null;
         $subscriber->email = $criteria['email'] ?? null;
-        $subscriber->userId = $criteria['userId'] ?? null;
         $subscriber->firstName = $criteria['firstName'] ?? null;
         $subscriber->lastName = $criteria['lastName'] ?? null;
+
+        $listType = $criteria['listType'] ?? MailingList::class;
+        $subscriber->listType = $listType;
 
         /**
          * @var $listTypeObject ListType

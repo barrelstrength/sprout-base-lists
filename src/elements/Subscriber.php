@@ -32,6 +32,16 @@ class Subscriber extends Element
     public $id;
 
     /**
+     * @var int
+     */
+    public $userId;
+
+    /**
+     * @var int
+     */
+    public $itemId;
+
+    /**
      * @var string
      */
     public $email;
@@ -47,24 +57,14 @@ class Subscriber extends Element
     public $lastName;
 
     /**
-     * @var int
+     * @var ListType
      */
-    public $elementId;
-
-    /**
-     * @var int
-     */
-    public $userId;
+    public $listType;
 
     /**
      * @var array
      */
     public $subscriberLists;
-
-    /**
-     * @var ListType
-     */
-    public $listType;
 
     /**
      * @var array
@@ -243,7 +243,7 @@ class Subscriber extends Element
         $lists = [];
 
         $subscriptions = Subscription::find()->where([
-            'subscriberId' => $this->id
+            'listId' => $this->id
         ])->all();
 
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);

@@ -41,14 +41,14 @@ class MailingList extends BaseSproutListType
      * @return bool|mixed
      * @throws \Throwable
      */
-    public function subscribe(Subscription $subscription): bool
+    public function add(Subscription $subscription): bool
     {
         // If our Subscriber doesn't exist, create a Subscriber Element
         $subscriber = $this->getOrCreateSubscriber($subscription, $this->settings->enableUserSync);
 
         if (!$subscriber) {
-            $subscription->addError('elementId', Craft::t('sprout-base-lists', 'No user found with id: {id}', [
-                'id' => $subscription->elementId
+            $subscription->addError('itemId', Craft::t('sprout-base-lists', 'No user found with id: {id}', [
+                'id' => $subscription->itemId
             ]));
         }
 
@@ -71,7 +71,7 @@ class MailingList extends BaseSproutListType
         }
 
         if ($this->settings->enableUserSync) {
-            $subscriber->elementId = $subscription->elementId;
+            $subscriber->itemId = $subscription->itemId;
         }
 
         try {
@@ -88,7 +88,7 @@ class MailingList extends BaseSproutListType
 
             if ($list) {
                 $subscriptionRecord->listId = $list->id;
-                $subscriptionRecord->subscriberId = $subscriber->id;
+                $subscriptionRecord->itemId = $subscriber->id;
 
                 // Create a criteria between our List Element and Subscriber Element
                 if ($subscriptionRecord->save(false)) {
@@ -108,7 +108,7 @@ class MailingList extends BaseSproutListType
      * @return bool
      * @throws NotFoundHttpException
      */
-    public function unsubscribe(Subscription $subscription): bool
+    public function remove(Subscription $subscription): bool
     {
         $subscriberList = new SubscriberList();
         $subscriberList->id = $subscription->listId;
@@ -120,13 +120,8 @@ class MailingList extends BaseSproutListType
             return false;
         }
 
-//        if ($subscription->elementId) {
-//            $list->elementId = $list->id;
-//            $list->save();
-//        }
-
         $subscriber = new Subscriber();
-        $subscriber->elementId = $subscription->elementId;
+        $subscriber->itemId = $subscription->itemId;
         $subscriber->email = $subscription->email;
 
         $subscriber = $this->getSubscriber($subscriber);
@@ -134,7 +129,7 @@ class MailingList extends BaseSproutListType
         // Delete the subscription that matches the List and Subscriber IDs
         $subscriptions = SubscriptionRecord::deleteAll([
             'listId' => $list->id,
-            'subscriberId' => $subscriber->id
+            'itemId' => $subscriber->id
         ]);
 
         if ($subscriptions != null) {
@@ -152,15 +147,15 @@ class MailingList extends BaseSproutListType
      * @return bool
      * @throws NotFoundHttpException
      */
-    public function isSubscribed(Subscription $subscription): bool
+    public function isOnList(Subscription $subscription): bool
     {
         if ($subscription->listId === null) {
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `listId` is required to check if a User is subscribed to a List.'));
         }
 
         // We need a user ID or an email
-        if ($subscription->elementId === null && $subscription->email === null) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `elementId` or `email` are required to check if a User is subscribed to a List.'));
+        if ($subscription->itemId === null && $subscription->email === null) {
+            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `itemId` or `email` are required to check if a User is subscribed to a List.'));
         }
 
         $subscriberList = new SubscriberList();
@@ -179,7 +174,7 @@ class MailingList extends BaseSproutListType
         $subscription->listHandle = $list->handle;
 
         $subscriber = new Subscriber();
-        $subscriber->elementId = $subscription->elementId;
+        $subscriber->itemId = $subscription->itemId;
         $subscriber->email = $subscription->email;
 
         $subscriber = $this->getSubscriber($subscriber);
@@ -190,7 +185,7 @@ class MailingList extends BaseSproutListType
 
         return SubscriptionRecord::find()->where([
             'listId' => $list->id,
-            'subscriberId' => $subscriber->id
+            'itemId' => $subscriber->id
         ])->exists();
     }
 
@@ -211,11 +206,11 @@ class MailingList extends BaseSproutListType
         $email = trim($subscription->email);
 
         // Try to find a matching User Element
-        if (is_numeric($subscription->elementId)) {
+        if (is_numeric($subscription->itemId)) {
             /** @var Element $element */
-            $user = Craft::$app->elements->getElementById($subscription->elementId, User::class);
-        } elseif (is_string($subscription->elementId)) {
-            $user = Craft::$app->getUsers()->getUserByUsernameOrEmail($subscription->elementId);
+            $user = Craft::$app->elements->getElementById($subscription->itemId, User::class);
+        } elseif (is_string($subscription->itemId)) {
+            $user = Craft::$app->getUsers()->getUserByUsernameOrEmail($subscription->itemId);
         } elseif ($email !== null) {
             $user = Craft::$app->getUsers()->getUserByUsernameOrEmail($email);
         }
@@ -226,23 +221,23 @@ class MailingList extends BaseSproutListType
         }
 
         if (!$user) {
-            $subscription->addError('elementId', Craft::t('sprout-base-lists', 'No user found with id: {id}', [
-                'id' => $subscription->elementId
+            $subscription->addError('itemId', Craft::t('sprout-base-lists', 'No user found with id: {id}', [
+                'id' => $subscription->itemId
             ]));
         } elseif ($this->settings->enableUserSync) {
             // Use values from user profile as fallbacks
-            $subscription->elementId = $user->id;
+            $subscription->itemId = $user->id;
             $subscription->firstName = $subscription->firstName ?? $user->firstName;
             $subscription->lastName = $subscription->lastName ?? $user->lastName;
         }
 
-        // Make sure we have the email (if only the elementId was provided)
+        // Make sure we have the email (if only the itemId was provided)
         $subscription->email = $subscription->email ?? $user->email;
 
         // Now, check for a matching Subscriber Element
         $subscriber = new Subscriber();
-        // The elementId represents the Subscriber Element or the User Element for the Mailing List
-        $subscriber->elementId = $subscription->elementId;
+        // The itemId represents the Subscriber Element or the User Element for the Mailing List
+        $subscriber->itemId = $subscription->itemId;
         $subscriber->email = $subscription->email;
 
         if ($subscriberModel = $this->getSubscriber($subscriber)) {
@@ -250,7 +245,7 @@ class MailingList extends BaseSproutListType
         }
 
         if ($sync === true && $user && $subscriber->email !== null) {
-            $subscriber->elementId = $user->id;
+            $subscriber->itemId = $user->id;
         }
 
         $this->saveSubscriber($subscriber);
@@ -272,13 +267,13 @@ class MailingList extends BaseSproutListType
          * 3. Any Element with a matching ID
          * 4.
          */
-        if (is_numeric($subscriber->elementId)) {
+        if (is_numeric($subscriber->itemId)) {
             /** @var Element $element */
-            $element = Craft::$app->elements->getElementById($subscriber->elementId);
+            $element = Craft::$app->elements->getElementById($subscriber->itemId);
 
             if ($element === null) {
                 Craft::warning(Craft::t('sprout-base-lists', 'Unable to find a Subscriber with Element ID: {id}', [
-                    'id' => $subscriber->elementId
+                    'id' => $subscriber->itemId
                 ]), 'sprout-base-lists');
 
                 return null;
@@ -301,7 +296,7 @@ class MailingList extends BaseSproutListType
             // @todo this needs refactoring. If a Subscriber doesn't have a userId, they could still have a matching email
             // so some scenarios, like having a user in the db and then enabling user sync, may not work right.
             $attributes = array_filter([
-//                'sproutlists_subscribers.userId' => $subscriber->elementId,
+//                'sproutlists_subscribers.itemId' => $subscriber->itemId,
                 'sproutlists_subscribers.email' => $subscriber->email
             ]);
 
@@ -311,10 +306,10 @@ class MailingList extends BaseSproutListType
             return $subscriberQuery->one();
         }
 
-        if (is_string($subscriber->elementId)) {
+        if (is_string($subscriber->itemId)) {
             /** @noinspection PhpIncompatibleReturnTypeInspection */
             return SubscriberList::find()->where([
-                'sproutlists_subscribers.email' => $subscriber->elementId
+                'sproutlists_subscribers.email' => $subscriber->itemId
             ])->one();
         }
 

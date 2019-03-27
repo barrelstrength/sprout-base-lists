@@ -31,14 +31,14 @@ class SubscriberQuery extends ElementQuery
         if ($this->listId) {
             // Get all subscriptions for this list
             $subscriptions = SubscriptionRecord::find()
-                ->select('subscriberId')
+                ->select('itemId')
                 ->where([
                     'listId' => $this->listId
                 ])->all();
 
             // Filter so we only have ids
             $subscriberIds = array_map(function($subscriptions) {
-                return $subscriptions->subscriberId;
+                return $subscriptions->itemId;
             }, $subscriptions);
 
             // Only return subscribers that match this query

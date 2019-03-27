@@ -34,12 +34,12 @@ class WishList extends BaseSproutListType
         return Craft::t('sprout-lists', 'Wish List');
     }
 
-    public function subscribe(Subscription $subscription): bool {
+    public function add(Subscription $subscription): bool {
 
         return false;
     }
 
-    public function unsubscribe(Subscription $subscription): bool {
+    public function remove(Subscription $subscription): bool {
         return false;
     }
 
@@ -76,7 +76,7 @@ class WishList extends BaseSproutListType
         $subscription->listHandle = $list->handle;
 
         $subscriber = new Subscriber();
-        $subscriber->elementId = $subscription->itemId;
+        $subscriber->userId = $subscription->itemId;
 
         $subscriber = $this->getSubscriber($subscriber);
 
@@ -86,7 +86,7 @@ class WishList extends BaseSproutListType
 
         return SubscriptionRecord::find()->where([
             'listId' => $list->id,
-            'subscriberId' => $subscriber->id
+            'itemId' => $subscriber->id
         ])->exists();
     }
 
@@ -104,13 +104,13 @@ class WishList extends BaseSproutListType
          * 3. Any Element with a matching ID
          * 4.
          */
-        if (is_numeric($subscriber->elementId)) {
+        if (is_numeric($subscriber->userId)) {
             /** @var Element $element */
-            $element = Craft::$app->elements->getElementById($subscriber->elementId);
+            $element = Craft::$app->elements->getElementById($subscriber->userId);
 
             if ($element === null) {
                 Craft::warning(Craft::t('sprout-base-lists', 'Unable to find an Element with ID: {id}', [
-                    'id' => $subscriber->elementId
+                    'id' => $subscriber->userId
                 ]), 'sprout-base-lists');
 
                 return null;
