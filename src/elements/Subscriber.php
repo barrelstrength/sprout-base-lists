@@ -243,7 +243,7 @@ class Subscriber extends Element
         $lists = [];
 
         $subscriptions = Subscription::find()->where([
-            'listId' => $this->id
+            'itemId' => $this->id
         ])->all();
 
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
