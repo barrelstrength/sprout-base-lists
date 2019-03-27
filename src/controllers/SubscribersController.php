@@ -55,7 +55,11 @@ class SubscribersController extends Controller
         $subscriber = new Subscriber();
 
         if ($subscriberId != null) {
-            $subscriber = Craft::$app->getElements()->getElementById($subscriberId);
+            $elementSubscriber = Craft::$app->getElements()->getElementById($subscriberId);
+
+            if ($elementSubscriber) {
+                $subscriber = $elementSubscriber;
+            }
         }
 
         $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');

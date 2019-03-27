@@ -53,20 +53,19 @@ class ListsController extends Controller
 
         $listType = SproutBaseLists::$app->lists->getListType($type);
 
-        if ($list == null) {
-            $list = new SubscriberList();
-        }
-
         $continueEditingUrl = null;
 
-        if ($listId != null) {
+        if (!$list) {
+            if ($listId == null) {
+                $list = new SubscriberList();
+            } else {
+                /**
+                 * @var $listType ListType
+                 */
+                $list = $listType->getListById($listId);
 
-            /**
-             * @var $listType ListType
-             */
-            $list = $listType->getListById($listId);
-
-            $continueEditingUrl = 'sprout-lists/lists/edit/'.$listId;
+                $continueEditingUrl = 'sprout-lists/lists/edit/'.$listId;
+            }
         }
 
         $redirectUrl = UrlHelper::cpUrl($pluginHandle.'/lists');
