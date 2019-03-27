@@ -115,6 +115,8 @@ abstract class ListType extends Component
     abstract public function saveList(SubscriberList $list);
 
     /**
+     * Runs on CP Panel controller to avoid incorrect values on checkbox values
+     *
      * @param $subscriber
      *
      * @return null
