@@ -9,7 +9,7 @@ use craft\db\Migration;
  *
  * @package barrelstrength\sproutlists\migrations
  */
-class m190327_000000_update_subscription_column_name extends Migration
+class m190327_000000_update_column_name extends Migration
 {
     /**
      * @return bool
@@ -23,6 +23,11 @@ class m190327_000000_update_subscription_column_name extends Migration
             $this->renameColumn($table, 'subscriberId', 'itemId');
         }
 
+        $listTable = '{{%sproutlists_lists}}';
+
+        if (!$this->db->columnExists($listTable, 'totalSubscribers')) {
+            $this->renameColumn($table, 'totalSubscribers', 'count');
+        }
         return true;
     }
 
