@@ -4,14 +4,11 @@ namespace barrelstrength\sproutbaselists\listtypes;
 
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\ListElement;
-use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\base\Element;
-use craft\errors\ElementNotFoundException;
-use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
 use yii\base\Exception;
 use yii\web\NotFoundHttpException;
@@ -38,8 +35,6 @@ abstract class BaseListType extends ListType
      */
     public function saveList(ListElement $list)
     {
-        $list->count = 0;
-
         return Craft::$app->elements->saveElement($list);
     }
 
@@ -100,9 +95,9 @@ abstract class BaseListType extends ListType
     public function updateCount($listId = null): bool
     {
         if ($listId == null) {
-            $lists = ListElementRecord::find()->all();
+            $lists = ListElement::find()->all();
         } else {
-            $list = ListElementRecord::findOne($listId);
+            $list = ListElement::findOne($listId);
 
             $lists = [$list];
         }

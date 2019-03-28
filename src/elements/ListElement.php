@@ -43,7 +43,7 @@ class ListElement extends Element
     /**
      * @var int
      */
-    public $count;
+    public $count = 0;
 
     /**
      * Use the name as the string representation.
@@ -232,6 +232,7 @@ class ListElement extends Element
         $record->type = $this->type;
         $record->name = $this->name;
         $record->handle = $this->handle;
+        $record->count = $this->count;
 
         $record->save(false);
 
