@@ -43,6 +43,19 @@ class m190327_000001_update_element_type extends Migration
             ], ['type' => $listClass['oldType']], [], false);
         }
 
+        $mailingClasses = [
+            0 => [
+                'oldType' => 'barrelstrength\sproutlists\listtypes\SubscriberListType',
+                'newType' => 'barrelstrength\sproutbaselists\listtypes\MailingList'
+            ]
+        ];
+
+        foreach ($mailingClasses as $mailingClass) {
+            $this->update('{{%sproutlists_lists}}', [
+                'type' => $mailingClass['newType']
+            ], ['type' => $mailingClass['oldType']], [], false);
+        }
+
         return true;
     }
 
