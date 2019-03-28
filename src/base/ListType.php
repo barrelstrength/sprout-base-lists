@@ -3,8 +3,7 @@
 namespace barrelstrength\sproutbaselists\base;
 
 use barrelstrength\sproutbase\SproutBase;
-use barrelstrength\sproutbaselists\elements\SubscriberList;
-use barrelstrength\sproutbaselists\elements\Subscriber;
+use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\models\Subscription;
 use craft\base\Component;
@@ -56,49 +55,18 @@ abstract class ListType extends Component
     abstract public function remove(Subscription $subscription): bool;
 
     /**
-     * Check if a user is subscribed to a list
-     *
-     * @param Subscription $subscription
-     *
-     * @return bool
-     */
-    abstract public function isOnList(Subscription $subscription): bool;
-
-    /**
-     * Return all lists for a given subscriber.
-     *
-     * @param Subscriber $subscriber
-     *
-     * @return array
-     */
-    abstract public function getLists(Subscriber $subscriber): array;
-
-    /**
-     * Get subscribers on a given list.
-     *
-     * @param SubscriberList $list
-     *
-     * @return mixed
-     * @internal param $criteria
-     *
-     */
-    abstract public function getSubscribers(SubscriberList $list);
-
-    /**
-     * Return total subscriptions for a given subscriber.
-     *
-     * @param Subscriber $subscriber
-     *
-     * @return int
-     */
-    abstract public function getListCount(Subscriber $subscriber = null): int;
-
-    /**
-     * @param SubscriberList $list
+     * @param ListElement $list
      *
      * @return mixed
      */
-    abstract public function getSubscriberCount(SubscriberList $list);
+    abstract public function saveList(ListElement $list);
+
+    /**
+     * @param ListElement $list
+     *
+     * @return mixed
+     */
+    abstract public function deleteList(ListElement $list);
 
     /**
      * @param int $listId
@@ -108,11 +76,30 @@ abstract class ListType extends Component
     abstract public function getListById(int $listId);
 
     /**
-     * @param SubscriberList $list
+     * Get subscribers on a given list.
+     *
+     * @param ListElement $list
+     *
+     * @return mixed
+     * @internal param $criteria
+     */
+    abstract public function getItems(ListElement $list);
+
+    /**
+     * Check if a user is subscribed to a list
+     *
+     * @param Subscription $subscription
+     *
+     * @return bool
+     */
+    abstract public function hasItem(Subscription $subscription): bool;
+
+    /**
+     * @param ListElement $list
      *
      * @return mixed
      */
-    abstract public function saveList(SubscriberList $list);
+    abstract public function getCount(ListElement $list);
 
     /**
      * Runs on CP Panel controller to avoid incorrect values on checkbox values

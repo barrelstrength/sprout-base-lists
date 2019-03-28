@@ -7,7 +7,7 @@ use craft\db\ActiveRecord;
 use yii\db\ActiveQueryInterface;
 
 /**
- * Class SubscriberList record.
+ * Class ListElement record.
  *
  * @property int                          $id
  * @property int                          $elementId
@@ -16,9 +16,10 @@ use yii\db\ActiveQueryInterface;
  * @property string                       $handle
  * @property \yii\db\ActiveQueryInterface $element
  * @property \yii\db\ActiveQueryInterface $subscribers
- * @property int                          $totalSubscribers
+ * @property \yii\db\ActiveQueryInterface $listsWithSubscribers
+ * @property int                          $count
  */
-class SubscriberList extends ActiveRecord
+class ListElement extends ActiveRecord
 {
     /**
      * @return string
@@ -39,10 +40,12 @@ class SubscriberList extends ActiveRecord
     }
 
     /**
+     * @todo - move this off the ListElement record. Subscribers are a separate concept.
+     *
      * @return ActiveQueryInterface
      * @throws \yii\base\InvalidConfigException
      */
-    public function getSubscribers(): ActiveQueryInterface
+    public function getListsWithSubscribers(): ActiveQueryInterface
     {
         return $this->hasMany(Subscriber::class, ['id' => 'itemId'])
             ->viaTable('{{%sproutlists_subscriptions}}', ['listId' => 'id']);

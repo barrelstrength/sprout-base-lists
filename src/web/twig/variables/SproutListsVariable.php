@@ -2,9 +2,6 @@
 
 namespace barrelstrength\sproutbaselists\web\twig\variables;
 
-use barrelstrength\sproutbaselists\base\ListType;
-use barrelstrength\sproutbaselists\elements\SubscriberList;
-use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
@@ -20,7 +17,7 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function getIsOnList(array $criteria = [])
+    public function hasItem(array $criteria = [])
     {
         $subscription = new Subscription();
         $subscription->listType = $criteria['listType'] ?? MailingList::class;
@@ -31,7 +28,7 @@ class SproutListsVariable
 
         $listType = SproutBaseLists::$app->lists->getListType($subscription->listType);
 
-        return $listType->isOnList($subscription);
+        return $listType->hasItem($subscription);
     }
 
     /**
@@ -47,24 +44,24 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function getLists(array $criteria = [])
-    {
-        $subscriber = new Subscriber();
-        $subscriber->id = $criteria['subscriberId'] ?? null;
-        $subscriber->email = $criteria['email'] ?? null;
-        $subscriber->firstName = $criteria['firstName'] ?? null;
-        $subscriber->lastName = $criteria['lastName'] ?? null;
-
-        $listType = $criteria['listType'] ?? MailingList::class;
-        $subscriber->listType = $listType;
-
-        /**
-         * @var $listTypeObject ListType
-         */
-        $listTypeObject = new $listType;
-
-        return $listTypeObject->getLists($subscriber);
-    }
+//    public function getLists(array $criteria = [])
+//    {
+//        $subscriber = new Subscriber();
+//        $subscriber->id = $criteria['subscriberId'] ?? null;
+//        $subscriber->email = $criteria['email'] ?? null;
+//        $subscriber->firstName = $criteria['firstName'] ?? null;
+//        $subscriber->lastName = $criteria['lastName'] ?? null;
+//
+//        $listType = $criteria['listType'] ?? MailingList::class;
+//        $subscriber->listType = $listType;
+//
+//        /**
+//         * @var $listTypeObject ListType
+//         */
+//        $listTypeObject = new $listType;
+//
+//        return $listTypeObject->getLists($subscriber);
+//    }
 
     /**
      * Return all subscribers on a given list.
@@ -74,20 +71,20 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function getSubscribers(array $criteria = [])
-    {
-        if (!isset($criteria['listId'])) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'The `listId` parameter is required.'));
-        }
-
-        $list = new SubscriberList();
-        $list->id = $criteria['listId'] ?? null;
-
-        $listType = SproutBaseLists::$app->lists->getListTypeById($list->id);
-        $list->type = get_class($listType);
-
-        return $listType->getSubscribers($list);
-    }
+//    public function getSubscribers(array $criteria = [])
+//    {
+//        if (!isset($criteria['listId'])) {
+//            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'The `listId` parameter is required.'));
+//        }
+//
+//        $list = new ListElement();
+//        $list->id = $criteria['listId'] ?? null;
+//
+//        $listType = SproutBaseLists::$app->lists->getListTypeById($list->id);
+//        $list->type = get_class($listType);
+//
+//        return $listType->getItems($list);
+//    }
 
     // Counts
     // =========================================================================
@@ -100,19 +97,19 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function getListCount(array $criteria = [])
-    {
-        $subscriber = new Subscriber();
-        $subscriber->listType = $criteria['listType'] ?? MailingList::class;
-        $subscriber->email = $criteria['email'] ?? null;
-        $subscriber->userId = $criteria['userId'] ?? null;
-        $subscriber->firstName = $criteria['firstName'] ?? null;
-        $subscriber->lastName = $criteria['lastName'] ?? null;
-
-        $listType = SproutBaseLists::$app->lists->getListType($subscriber->listType);
-
-        return $listType->getListCount($subscriber);
-    }
+//    public function getListCount(array $criteria = [])
+//    {
+//        $subscriber = new Subscriber();
+//        $subscriber->listType = $criteria['listType'] ?? MailingList::class;
+//        $subscriber->email = $criteria['email'] ?? null;
+//        $subscriber->userId = $criteria['userId'] ?? null;
+//        $subscriber->firstName = $criteria['firstName'] ?? null;
+//        $subscriber->lastName = $criteria['lastName'] ?? null;
+//
+//        $listType = SproutBaseLists::$app->lists->getListType($subscriber->listType);
+//
+//        return $listType->getListCount($subscriber);
+//    }
 
     /**
      * Return total subscriber count on a given list.
@@ -122,16 +119,16 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function getSubscriberCount(array $criteria = [])
-    {
-        $list = new SubscriberList();
-        $list->id = $criteria['listId'] ?? null;
-
-        $listType = SproutBaseLists::$app->lists->getListTypeById($list->id);
-        $list->type = get_class($listType);
-
-        return $listType->getSubscriberCount($list);
-    }
+//    public function getSubscriberCount(array $criteria = [])
+//    {
+//        $list = new ListElement();
+//        $list->id = $criteria['listId'] ?? null;
+//
+//        $listType = SproutBaseLists::$app->lists->getListTypeById($list->id);
+//        $list->type = get_class($listType);
+//
+//        return $listType->getItemCount($list);
+//    }
 
     /**
      * @return array

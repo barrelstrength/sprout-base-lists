@@ -65,7 +65,7 @@ class SubscribersController extends Controller
         $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');
         $subscriber->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
         $subscriber->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
-        $subscriber->subscriberLists = Craft::$app->getRequest()->getBodyParam('sproutlists.subscriberLists');
+        $subscriber->listElements = Craft::$app->getRequest()->getBodyParam('sproutlists.subscriberLists');
 
         $type = Craft::$app->getRequest()->getBodyParam('type');
 
@@ -111,10 +111,9 @@ class SubscribersController extends Controller
         $listTypeParam = Craft::$app->getRequest()->getBodyParam('type');
         $listType = SproutBaseLists::$app->lists->getListType($listTypeParam);
 
-        // @todo - Refactor what we expect back in this method
-        $subscriber = $listType->deleteSubscriberById($subscriberId);
+        $subscriber = $listType->getSubscriberById($subscriberId);
 
-        if (!$subscriber) {
+        if (!$listType->deleteSubscriberById($subscriber->id)) {
             Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to delete subscriber.'));
 
             Craft::$app->getUrlManager()->setRouteParams([

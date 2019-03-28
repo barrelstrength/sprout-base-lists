@@ -2,7 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\elements\actions;
 
-use barrelstrength\sproutbaselists\elements\SubscriberList;
+use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\elements\actions\Delete;
@@ -36,15 +36,16 @@ class DeleteList extends Delete
     public function performAction(ElementQueryInterface $query): bool
     {
         /**
-         * @var SubscriberList[] $lists
+         * @var ListElement[] $lists
          */
         $lists = $query->all();
 
         // Delete the users
         foreach ($lists as $list) {
-            $id = $list->id;
+            $listType = SproutBaseLists::$app->lists->getListTypeById($list->id);
+            $list = $listType->getListById($list->id);
 
-            SproutBaseLists::$app->lists->deleteList($id);
+            $listType->deleteList($list);
         }
 
         $this->setMessage(Craft::t('sprout-lists', 'List(s) deleted.'));

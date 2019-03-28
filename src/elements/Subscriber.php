@@ -11,7 +11,6 @@ use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
-use barrelstrength\sproutbaselists\web\assets\sproutlist\ListAsset;
 use craft\base\Element;
 use Craft;
 use craft\elements\db\ElementQueryInterface;
@@ -64,12 +63,12 @@ class Subscriber extends Element
     /**
      * @var array
      */
-    public $subscriberLists;
+    public $listElements;
 
     /**
      * @var array
      */
-    private $subscriberListsIds;
+    private $listElementIds;
 
     /**
      * @return string
@@ -138,7 +137,7 @@ class Subscriber extends Element
 
         if (!empty($lists)) {
             $sources[] = [
-                'heading' => $listType->displayName()
+                'heading' => $listType::displayName()
             ];
 
             foreach ($lists as $list) {
@@ -215,21 +214,21 @@ class Subscriber extends Element
      */
     public function getListIds(): array
     {
-        if ($this->subscriberListsIds) {
-            return $this->subscriberListsIds;
+        if ($this->listElementIds) {
+            return $this->listElementIds;
         }
 
-        $subscriberLists = $this->getLists();
+        $listElements = $this->getLists();
 
-        if (!count($subscriberLists)) {
+        if (!count($listElements)) {
             return [];
         }
 
-        foreach ($subscriberLists as $list) {
-            $this->subscriberListsIds[] = $list->id;
+        foreach ($listElements as $list) {
+            $this->listElementIds[] = $list->id;
         }
 
-        return $this->subscriberListsIds;
+        return $this->listElementIds;
     }
 
     /**
@@ -252,6 +251,7 @@ class Subscriber extends Element
             /** @var Subscription $subscription */
             foreach ($subscriptions as $subscription) {
                 /**
+                 * @todo - move query out of loop.
                  * @var $listType ListType
                  */
                 $lists[] = $listType->getListById($subscription->listId);

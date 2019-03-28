@@ -3,16 +3,17 @@
 namespace barrelstrength\sproutbaselists\elements;
 
 use barrelstrength\sproutbaselists\elements\actions\DeleteList;
-use barrelstrength\sproutbaselists\elements\db\SubscriberListQuery;
+use barrelstrength\sproutbaselists\elements\db\ListElementQuery;
+use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Element;
 use Craft;
 use craft\elements\db\ElementQueryInterface;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
-use barrelstrength\sproutbaselists\records\SubscriberList as ListsRecord;
+use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
 use yii\web\ErrorHandler;
 
-class SubscriberList extends Element
+class ListElement extends Element
 {
     /**
      * @var int
@@ -42,7 +43,21 @@ class SubscriberList extends Element
     /**
      * @var int
      */
-    public $totalSubscribers;
+    public $count;
+
+    /**
+     * Use the name as the string representation.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        try {
+            return (string)$this->name;
+        } catch (\Exception $e) {
+            ErrorHandler::convertExceptionToError($e);
+        }
+    }
 
     /**
      * @return string
@@ -84,7 +99,7 @@ class SubscriberList extends Element
      */
     public static function find(): ElementQueryInterface
     {
-        return new SubscriberListQuery(static::class);
+        return new ListElementQuery(static::class);
     }
 
     /**
@@ -101,21 +116,27 @@ class SubscriberList extends Element
             ]
         ];
 
-        return $sources;
-    }
+        $listTypes = SproutBaseLists::$app->lists->getAllListTypes();
 
-    /**
-     * Use the name as the string representation.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        try {
-            return (string)$this->name;
-        } catch (\Exception $e) {
-            ErrorHandler::convertExceptionToError($e);
+        if (!empty($listTypes)) {
+
+            $sources[] = [
+                'heading' => 'List Types'
+            ];
+
+            foreach ($listTypes as $listType) {
+                $source = [
+                    'key' => 'lists:'.$listType->getClassName(),
+                    'label' => $listType::displayName(),
+                    'data' => ['type' => $listType->getClassName()],
+                    'criteria' => ['type' => $listType->getClassName()]
+                ];
+
+                $sources[] = $source;
+            }
         }
+
+        return $sources;
     }
 
     /**
@@ -127,7 +148,7 @@ class SubscriberList extends Element
             'name' => ['label' => Craft::t('sprout-lists', 'Name')],
             'handle' => ['label' => Craft::t('sprout-lists', 'List Handle')],
             'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
-            'totalSubscribers' => ['label' => Craft::t('sprout-lists', 'Total Subscriber')],
+            'count' => ['label' => Craft::t('sprout-lists', 'Count')],
             'dateCreated' => ['label' => Craft::t('sprout-lists', 'Date Created')]
         ];
 
@@ -141,7 +162,7 @@ class SubscriberList extends Element
      */
     public function getTableAttributeHtml(string $attribute): string
     {
-        $totalSubscribers = $this->totalSubscribers;
+        $count = $this->count;
 
         switch ($attribute) {
             case 'handle':
@@ -152,7 +173,7 @@ class SubscriberList extends Element
 
             case 'view':
 
-                if ($this->id && $totalSubscribers > 0) {
+                if ($this->id && $count > 0) {
                     return '<a href="'.UrlHelper::cpUrl('sprout-lists/subscribers/'.$this->handle).'" class="go">'.
                         Craft::t('sprout-lists', 'View Subscriber').'</a>';
                 }

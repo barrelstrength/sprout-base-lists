@@ -3,10 +3,11 @@
 namespace barrelstrength\sproutbaselists\elements\db;
 
 use craft\elements\db\ElementQuery;
-use craft\helpers\Db;
 
-class SubscriberListQuery extends ElementQuery
+class ListElementQuery extends ElementQuery
 {
+    public $type;
+
     /**
      * @inheritdoc
      */
@@ -18,8 +19,13 @@ class SubscriberListQuery extends ElementQuery
             'sproutlists_lists.type',
             'sproutlists_lists.name',
             'sproutlists_lists.handle',
-            'sproutlists_lists.totalSubscribers'
+            'sproutlists_lists.count'
         ]);
+
+        if ($this->type) {
+            $listClass = new $this->type();
+            $this->subQuery->andWhere(['sproutlists_lists.type' => get_class($listClass)]);
+        }
 
         return parent::beforePrepare();
     }

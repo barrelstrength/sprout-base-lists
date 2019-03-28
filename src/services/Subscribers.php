@@ -4,13 +4,11 @@ namespace barrelstrength\sproutbaselists\services;
 
 use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\models\Settings;
-use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use craft\base\Component;
 use craft\elements\User;
 use craft\events\ElementEvent;
-use Craft;
 
 class Subscribers extends Component
 {
@@ -104,7 +102,7 @@ class Subscribers extends Component
     }
 
     /**
-     * Remove any relationships between Sprout SubscriberList Subscriber and Users who are deleted.
+     * Remove any relationships between Sprout ListElement Subscriber and Users who are deleted.
      * Deleting a Craft User does not delete the matching Subscriber. It simply removes
      * the relationship to any Craft User ID from the Subscriber table.
      *
@@ -142,20 +140,5 @@ class Subscribers extends Component
         }
 
         return false;
-    }
-
-    /**
-     * Delete a subscriber and all related subscriptions
-     *
-     * @param $id
-     *
-     * @throws \Throwable
-     */
-    public function deleteSubscriberById($id)
-    {
-        if (Craft::$app->getElements()->deleteElementById($id)) {
-            SubscribersRecord::deleteAll('id = :subscriberId', [':subscriberId' => $id]);
-            Subscription::deleteAll('listId = :listId', [':listId' => $id]);
-        }
     }
 }

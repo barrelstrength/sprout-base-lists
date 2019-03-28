@@ -4,12 +4,11 @@ namespace barrelstrength\sproutbaselists\services;
 
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\events\RegisterListTypesEvent;
+use barrelstrength\sproutbaselists\listtypes\BaseListType;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
-use barrelstrength\sproutbaselists\records\Subscription;
 use craft\base\Component;
-use barrelstrength\sproutbaselists\records\SubscriberList as ListsRecord;
+use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
 use yii\base\Exception;
-
 
 /**
  *
@@ -32,7 +31,7 @@ class Lists extends Component
     /**
      * Gets all registered list types.
      *
-     * @return array
+     * @return ListType[]|[]
      */
     public function getAllListTypes(): array
     {
@@ -80,9 +79,9 @@ class Lists extends Component
     /**
      * @param $listId
      *
-     * @return MailingList
+     * @return ListType
      */
-    public function getListTypeById($listId): MailingList
+    public function getListTypeById($listId): ListType
     {
         $listRecord = null;
 
@@ -99,40 +98,5 @@ class Lists extends Component
         }
 
         return new $listRecord->type;
-    }
-
-    /**
-     * Deletes a list.
-     *
-     * @param $listId
-     *
-     * @return bool
-     * @throws \Exception
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
-     */
-    public function deleteList($listId): bool
-    {
-        $listRecord = ListsRecord::findOne($listId);
-
-        if ($listRecord == null) {
-            return false;
-        }
-
-        if ($listRecord AND $listRecord->delete()) {
-            $subscriptions = Subscription::find()->where([
-                'listId' => $listId
-            ]);
-
-            if ($subscriptions != null) {
-                Subscription::deleteAll('listId = :listId', [
-                    ':listId' => $listId
-                ]);
-            }
-
-            return true;
-        }
-
-        return false;
     }
 }

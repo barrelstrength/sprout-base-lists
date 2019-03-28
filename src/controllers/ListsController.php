@@ -3,7 +3,7 @@
 namespace barrelstrength\sproutbaselists\controllers;
 
 use barrelstrength\sproutbaselists\base\ListType;
-use barrelstrength\sproutbaselists\elements\SubscriberList;
+use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
@@ -57,7 +57,7 @@ class ListsController extends Controller
 
         if (!$list) {
             if ($listId == null) {
-                $list = new SubscriberList();
+                $list = new ListElement();
             } else {
                 /**
                  * @var $listType ListType
@@ -91,7 +91,7 @@ class ListsController extends Controller
 
         $listId = Craft::$app->request->getBodyParam('listId');
 
-        $list = new SubscriberList();
+        $list = new ListElement();
 
         if ($listId !== null && $listId !== '') {
             $list = Craft::$app->getElements()->getElementById($listId);
@@ -133,10 +133,12 @@ class ListsController extends Controller
     public function actionDeleteList(): Response
     {
         $this->requirePostRequest();
-
         $listId = Craft::$app->getRequest()->getBodyParam('listId');
 
-        if (SproutBaseLists::$app->lists->deleteList($listId)) {
+        $listType = SproutBaseLists::$app->lists->getListTypeById($listId);
+        $list = $listType->getListById($listId);
+
+        if ($listType->deleteList($list)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([
                     'success' => true

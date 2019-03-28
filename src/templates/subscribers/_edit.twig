@@ -52,8 +52,7 @@
         <input type="hidden" name="subscriberId" value="{{ subscriberId }}">
     {% endif %}
 
-    <input type="hidden" name="type"
-           value="barrelstrength\sproutbaselists\listtypes\MailingList">
+    <input type="hidden" name="type" value="barrelstrength\sproutbaselists\listtypes\MailingList">
 
     <section id="default-fields">
 
@@ -91,13 +90,13 @@
 
         {% for listType in listTypes %}
 
-            {% set subscriberListsHtml = listType.getSubscriberListsHtml(subscriberId) %}
+            {% set listElementsHtml = listType.getListElementsHtml(subscriberId) %}
 
-            {% if subscriberListsHtml != '' %}
+            {% if listElementsHtml != '' %}
 
                 <h2>{{ listType.displayName() }}</h2>
 
-                {{ subscriberListsHtml }}
+                {{ listElementsHtml }}
 
             {% else %}
 

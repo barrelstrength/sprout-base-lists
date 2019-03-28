@@ -2,21 +2,13 @@
 
 namespace barrelstrength\sproutbaselists\listtypes;
 
-use barrelstrength\sproutbaselists\base\ListType;
-use barrelstrength\sproutbase\SproutBase;
-use barrelstrength\sproutbaselists\elements\SubscriberList;
+use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\elements\Subscriber;
-use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
-use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\base\Element;
-use craft\helpers\Template;
-use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
-use barrelstrength\sproutbaselists\records\SubscriberList as SubscriberListRecord;
-use yii\base\Exception;
-use yii\web\NotFoundHttpException;
+use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
 
 /**
  *
@@ -24,7 +16,7 @@ use yii\web\NotFoundHttpException;
  * @property array  $listsWithSubscribers
  * @property string $handle
  */
-class WishList extends BaseSproutListType
+class WishList extends BaseListType
 {
     /**
      * @return string
@@ -47,9 +39,8 @@ class WishList extends BaseSproutListType
      * @param Subscription $subscription
      *
      * @return bool
-     * @throws NotFoundHttpException
      */
-    public function isSubscribed(Subscription $subscription): bool
+    public function hasItem(Subscription $subscription): bool
     {
         if (empty($subscription->listId)) {
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `listId` is required to check if an item is already on a List.'));
@@ -60,11 +51,11 @@ class WishList extends BaseSproutListType
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `itemId` is required to check if an item is already on a List.'));
         }
 
-        $subscriberList = new SubscriberList();
-        $subscriberList->id = $subscription->listId;
-        $subscriberList->handle = $subscription->listHandle;
+        $listElement = new ListElement();
+        $listElement->id = $subscription->listId;
+        $listElement->handle = $subscription->listHandle;
 
-        $list = $this->getList($subscriberList);
+        $list = $this->getList($listElement);
 
         // If we don't find a matching list, no subscription exists
         if ($list === null) {
@@ -124,12 +115,12 @@ class WishList extends BaseSproutListType
     }
 
     /**
-     * @param SubscriberList $list
+     * @param ListElement $list
      *
      * @return array|mixed
      * @throws \Exception
      */
-    public function getSubscribers(SubscriberList $list)
+    public function getItems(ListElement $list)
     {
         if (empty($list->type)) {
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: "type" is required by the getSubscribers variable.'));
@@ -145,16 +136,16 @@ class WishList extends BaseSproutListType
             return $subscribers;
         }
 
-        $listRecord = SubscriberListRecord::find()->where([
+        $listRecord = ListElementRecord::find()->where([
             'id' => $list->id,
             'type' => $list->type
         ])->one();
 
         /**
-         * @var $listRecord SubscriberListRecord
+         * @var $listRecord ListElementRecord
          */
         if ($listRecord != null) {
-            $subscribers = $listRecord->getSubscribers()->all();
+            $subscribers = $listRecord->getListsWithSubscribers()->all();
 
             return $subscribers;
         }

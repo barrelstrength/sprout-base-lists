@@ -12,6 +12,7 @@ use barrelstrength\sproutbaselists\controllers\ListsController;
 use barrelstrength\sproutbaselists\controllers\SubscribersController;
 use barrelstrength\sproutbaselists\events\RegisterListTypesEvent;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\listtypes\WishList;
 use barrelstrength\sproutbaselists\services\App;
 use barrelstrength\sproutbaselists\services\Lists;
 use barrelstrength\sproutbaselists\web\twig\extensions\TwigExtensions;
@@ -118,6 +119,7 @@ class SproutBaseLists extends Module
 
         Event::on(Lists::class, Lists::EVENT_REGISTER_LIST_TYPES, function(RegisterListTypesEvent $event) {
             $event->listTypes[] = MailingList::class;
+            $event->listTypes[] = WishList::class;
         });
 
         // Setup Template Roots
