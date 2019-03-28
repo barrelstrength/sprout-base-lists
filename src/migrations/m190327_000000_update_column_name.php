@@ -25,8 +25,8 @@ class m190327_000000_update_column_name extends Migration
 
         $listTable = '{{%sproutlists_lists}}';
 
-        if (!$this->db->columnExists($listTable, 'totalSubscribers')) {
-            $this->renameColumn($table, 'totalSubscribers', 'count');
+        if ($this->db->columnExists($listTable, 'totalSubscribers')) {
+            $this->renameColumn($listTable, 'totalSubscribers', 'count');
         }
         return true;
     }
