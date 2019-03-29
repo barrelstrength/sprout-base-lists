@@ -23,9 +23,6 @@ class Subscription extends Model
      */
     public $listHandle;
 
-    /**
-     * @var int
-     */
     public $listId;
 
     /**

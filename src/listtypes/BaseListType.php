@@ -151,12 +151,21 @@ abstract class BaseListType extends ListType
      */
     public function getOrCreateList(Subscription $subscription, $enableAutoList = false): ListElement
     {
-        $list = new ListElement();
-        $list->id = $subscription->listId;
-        $list->handle = $subscription->listHandle;
+        $listElement = new ListElement();
+
+        // Assign id property if it is listId and handle property if string
+        if (is_numeric($subscription->listId)) {
+            $listElement->id = $subscription->listId;
+        } elseif (is_string($subscription->listId)) {
+            $listElement->handle = $subscription->listId;
+        }
+
+//        $list = new ListElement();
+//        $list->id = $subscription->listId;
+//        $list->handle = $subscription->listHandle;
 
         /** @var ListElement|null $list */
-        if ($list = $this->getList($list)) {
+        if ($list = $this->getList($listElement)) {
             return $list;
         }
 
@@ -191,7 +200,7 @@ abstract class BaseListType extends ListType
          * 2. ANY Element with matching ID
          * 3. List Element with matching handle
          */
-        if (is_numeric($listElement->id)) {
+        if ($listElement->id !== null) {
             /** @var Element $element */
             $element = Craft::$app->elements->getElementById($listElement->id);
 
@@ -219,10 +228,10 @@ abstract class BaseListType extends ListType
             return ListElement::find()->where($attributes)->one();
         }
 
-        if (is_string($listElement->id)) {
+        if ($listElement->handle !== null) {
             /** @noinspection PhpIncompatibleReturnTypeInspection */
             return ListElement::find()->where([
-                'sproutlists_lists.handle' => $listElement->id
+                'sproutlists_lists.handle' => $listElement->handle
             ])->one();
         }
 

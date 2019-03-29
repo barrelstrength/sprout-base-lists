@@ -174,7 +174,7 @@ class ListsController extends Controller
         $this->requirePostRequest();
 
         $subscription = new Subscription();
-        $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId', Craft::$app->getUser()->getIdentity()->id);
+        $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
         $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
         $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
         $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
