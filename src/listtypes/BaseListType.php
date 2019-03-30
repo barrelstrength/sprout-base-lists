@@ -10,8 +10,6 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\base\Element;
 use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
-use yii\base\Exception;
-use yii\web\NotFoundHttpException;
 
 /**
  *

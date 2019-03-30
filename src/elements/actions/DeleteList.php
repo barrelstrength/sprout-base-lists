@@ -31,7 +31,6 @@ class DeleteList extends Delete
      * @return bool
      * @throws \Exception
      * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      */
     public function performAction(ElementQueryInterface $query): bool
     {

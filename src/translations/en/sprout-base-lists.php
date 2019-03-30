@@ -83,5 +83,8 @@ return [
     'Regular Expressions' => 'Regular Expressions',
     'Unable to find or create list.' => 'Unable to find or create list.',
     'old-location/(.*)' => 'old-location/(.*)',
-    'new-location/$1/$2' => 'new-location/$1/$2'
+    'new-location/$1/$2' => 'new-location/$1/$2',
+    'No Subscriber found with id: {id}' => 'No Subscriber found with id: {id}',
+    'Unable to find or create List' => 'Unable to find or create List',
+    'Unable to create Subscriber' => 'Unable to create Subscriber'
 ];

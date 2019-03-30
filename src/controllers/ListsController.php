@@ -127,7 +127,6 @@ class ListsController extends Controller
      * @return Response
      * @throws \Exception
      * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      * @throws \yii\web\BadRequestHttpException
      */
     public function actionDeleteList(): Response

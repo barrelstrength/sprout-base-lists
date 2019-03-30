@@ -162,7 +162,6 @@ class MailingList extends BaseListType
      * @return Subscriber|\craft\base\ElementInterface|null|boolean
      * @throws Exception
      * @throws \Throwable
-     * @throws ElementNotFoundException
      */
     public function createSubscriber(Subscription $subscription, $sync = false)
     {
