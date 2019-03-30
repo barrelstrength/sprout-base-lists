@@ -24,6 +24,66 @@ abstract class BaseListType extends ListType
     // =========================================================================
 
     /**
+     * @param Subscription $subscription
+     *
+     * @return ListElement|null
+     */
+    public function getList(Subscription $subscription)
+    {
+        $listElement = new ListElement();
+
+        // Assign id property if it is listId and handle property if string
+        if (is_numeric($subscription->listId)) {
+            $listElement->id = $subscription->listId;
+        } elseif (is_string($subscription->listId)) {
+            $listElement->handle = $subscription->listId;
+        }
+
+        /**
+         * See if we find:
+         * 1. List Element with matching ID
+         * 2. ANY Element with matching ID
+         * 3. List Element with matching handle
+         */
+        if ($listElement->id !== null) {
+            /** @var Element $element */
+            $element = Craft::$app->elements->getElementById($listElement->id);
+
+            if ($element === null) {
+                Craft::warning(Craft::t('sprout-base-lists', 'Unable to find a List with Element ID: {id}', [
+                    'id' => $listElement->id
+                ]), 'sprout-base-lists');
+
+                return null;
+            }
+
+            if (get_class($element) === ListElement::class) {
+                /** @noinspection PhpIncompatibleReturnTypeInspection */
+                return $element;
+            }
+
+            // If we found an Element that is not a Subscriber List, it should be mapped to a Subscriber List
+            // Check both the Element ID and the Handle as the Handle lets an Element be mapped to more than one list
+            $attributes = array_filter([
+                'sproutlists_lists.elementId' => $element->id,
+                'sproutlists_lists.handle' => $listElement->handle
+            ]);
+
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return ListElement::find()->where($attributes)->one();
+        }
+
+        if ($listElement->handle !== null) {
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return ListElement::find()->where([
+                'sproutlists_lists.handle' => $listElement->handle
+            ])->one();
+        }
+
+        return null;
+    }
+
+    /**
      * Saves a list.
      *
      * @param ListElement $list
@@ -135,106 +195,5 @@ abstract class BaseListType extends ListType
         $subscribers = $this->getItems($list);
 
         return count($subscribers);
-    }
-
-    /**
-     * Gets or creates list
-     *
-     * @param Subscription $subscription
-     * @param bool         $enableAutoList
-     *
-     * @return ListElement
-     * @throws Exception
-     * @throws NotFoundHttpException
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     */
-    public function getOrCreateList(Subscription $subscription, $enableAutoList = false): ListElement
-    {
-        $listElement = new ListElement();
-
-        // Assign id property if it is listId and handle property if string
-        if (is_numeric($subscription->listId)) {
-            $listElement->id = $subscription->listId;
-        } elseif (is_string($subscription->listId)) {
-            $listElement->handle = $subscription->listId;
-        }
-
-//        $list = new ListElement();
-//        $list->id = $subscription->listId;
-//        $list->handle = $subscription->listHandle;
-
-        /** @var ListElement|null $list */
-        if ($list = $this->getList($listElement)) {
-            return $list;
-        }
-
-        // Dynamically create a list
-        if ($enableAutoList) {
-            $list = new ListElement();
-            $list->type = __CLASS__;
-            $list->elementId = 1;
-            $list->name = $subscription->listHandle ?? 'list:'.$subscription->listId;
-            $list->handle = $subscription->listHandle ?? 'list:'.$subscription->listId;
-
-            $this->saveList($list);
-
-            return $list;
-        }
-
-        throw new NotFoundHttpException(Craft::t('sprout-base-lists', 'Unable to find a List with Element ID: {id}', [
-            'id' => $subscription->listId
-        ]));
-    }
-
-    /**
-     * @param ListElement $listElement
-     *
-     * @return ListElement|null
-     */
-    public function getList(ListElement $listElement)
-    {
-        /**
-         * See if we find:
-         * 1. List Element with matching ID
-         * 2. ANY Element with matching ID
-         * 3. List Element with matching handle
-         */
-        if ($listElement->id !== null) {
-            /** @var Element $element */
-            $element = Craft::$app->elements->getElementById($listElement->id);
-
-            if ($element === null) {
-                Craft::warning(Craft::t('sprout-base-lists', 'Unable to find a List with Element ID: {id}', [
-                    'id' => $listElement->id
-                ]), 'sprout-base-lists');
-
-                return null;
-            }
-
-            if (get_class($element) === ListElement::class) {
-                /** @noinspection PhpIncompatibleReturnTypeInspection */
-                return $element;
-            }
-
-            // If we found an Element that is not a Subscriber List, it should be mapped to a Subscriber List
-            // Check both the Element ID and the Handle as the Handle lets an Element be mapped to more than one list
-            $attributes = array_filter([
-                'sproutlists_lists.elementId' => $element->id,
-                'sproutlists_lists.handle' => $listElement->handle
-            ]);
-
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return ListElement::find()->where($attributes)->one();
-        }
-
-        if ($listElement->handle !== null) {
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return ListElement::find()->where([
-                'sproutlists_lists.handle' => $listElement->handle
-            ])->one();
-        }
-
-        return null;
     }
 }

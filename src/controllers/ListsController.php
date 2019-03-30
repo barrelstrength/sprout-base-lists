@@ -182,6 +182,8 @@ class ListsController extends Controller
         $subscription->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
         $listTypeClass = Craft::$app->getRequest()->getBodyParam('listType', MailingList::class);
 
+        $this->processEmail($subscription);
+
         /** @var ListType $listType */
         $listType = new $listTypeClass();
 
@@ -251,5 +253,22 @@ class ListsController extends Controller
         }
 
         return $this->redirectToPostedUrl();
+    }
+
+    /**
+     * Check if we received an email via the itemId field and confirm the email is valid
+     *
+     * @param Subscription $subscription
+     */
+    protected function processEmail(Subscription $subscription)
+    {
+        if (!is_numeric($subscription->itemId) && !$subscription->email) {
+            $subscription->email = $subscription->itemId;
+        }
+
+        // Make sure an email is an email
+        if (!empty($subscription->email) && filter_var(trim($subscription->email), FILTER_VALIDATE_EMAIL) === false) {
+            $subscription->addError('email', Craft::t('sprout-base-lists', 'Email is invalid.'));
+        }
     }
 }

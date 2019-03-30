@@ -28,6 +28,8 @@ class WishList extends BaseListType
 
     public function add(Subscription $subscription): bool {
 
+//      Default List ID to Craft::$app->getUser()->getIdentity()->id if none is provided.
+
         return false;
     }
 
@@ -51,11 +53,7 @@ class WishList extends BaseListType
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `itemId` is required to check if an item is already on a List.'));
         }
 
-        $listElement = new ListElement();
-        $listElement->id = $subscription->listId;
-        $listElement->handle = $subscription->listHandle;
-
-        $list = $this->getList($listElement);
+        $list = $this->getList($subscription);
 
         // If we don't find a matching list, no subscription exists
         if ($list === null) {
