@@ -194,7 +194,7 @@ class ListsController extends Controller
                     'errors' => $subscription->getErrors()
                 ]);
             }
-            
+
             Craft::$app->getUrlManager()->setRouteParams([
                 'subscription' => $subscription
             ]);

@@ -89,8 +89,8 @@ class Lists extends Component
             $listRecord = ListsRecord::findOne($listId);
         } else if (is_string($listId)) {
             $listRecord = ListsRecord::find()->where([
-                    'handle' => $listId
-                ])->one();
+                'handle' => $listId
+            ])->one();
         }
 
         if ($listRecord === null) {

@@ -26,14 +26,16 @@ class WishList extends BaseListType
         return Craft::t('sprout-lists', 'Wish List');
     }
 
-    public function add(Subscription $subscription): bool {
+    public function add(Subscription $subscription): bool
+    {
 
 //      Default List ID to Craft::$app->getUser()->getIdentity()->id if none is provided.
 
         return false;
     }
 
-    public function remove(Subscription $subscription): bool {
+    public function remove(Subscription $subscription): bool
+    {
         return false;
     }
 
