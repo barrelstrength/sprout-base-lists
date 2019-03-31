@@ -42,6 +42,7 @@ class DeleteSubscriber extends Delete
          */
         $subscribers = $query->all();
 
+        /**  @var MailingList $listType */
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
 
         // Delete the users

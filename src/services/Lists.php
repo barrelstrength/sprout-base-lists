@@ -61,10 +61,10 @@ class Lists extends Component
      *
      * @param $className
      *
-     * @return mixed
+     * @return ListType
      * @throws Exception
      */
-    public function getListType($className)
+    public function getListType($className): ListType
     {
         $listTypes = $this->getAllListTypes();
 

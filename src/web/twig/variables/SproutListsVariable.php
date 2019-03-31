@@ -2,7 +2,6 @@
 
 namespace barrelstrength\sproutbaselists\web\twig\variables;
 
-use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
@@ -17,18 +16,14 @@ class SproutListsVariable
      * @return mixed
      * @throws \Exception
      */
-    public function hasItem(array $criteria = [])
+    public function isSubscribed(array $criteria = [])
     {
-        $subscription = new Subscription();
-        $subscription->listType = $criteria['listType'] ?? MailingList::class;
-        $subscription->listId = $criteria['listId'] ?? null;
-        $subscription->listHandle = $criteria['listHandle'] ?? null;
-        $subscription->itemId = $criteria['itemId'] ?? null;
-        $subscription->email = $criteria['email'] ?? null;
+        $listType = $criteria['listType'] ?? null;
+        $listType = SproutBaseLists::$app->lists->getListType($listType);
 
-        $listType = SproutBaseLists::$app->lists->getListType($subscription->listType);
+        $subscription = $listType->populateSubscriptionFromIsSubscribedCriteria($criteria);
 
-        return $listType->hasItem($subscription);
+        return $listType->isSubscribed($subscription);
     }
 
     /**

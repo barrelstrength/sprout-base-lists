@@ -57,6 +57,8 @@ class ListElement extends Element
         } catch (\Exception $e) {
             ErrorHandler::convertExceptionToError($e);
         }
+
+        return parent::__toString();
     }
 
     /**
@@ -147,7 +149,10 @@ class ListElement extends Element
         $attributes = [
             'name' => ['label' => Craft::t('sprout-lists', 'Name')],
             'handle' => ['label' => Craft::t('sprout-lists', 'List Handle')],
-            'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
+
+            // @todo - this works for Mailing Lists but Not Wish Lists
+            // 'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
+
             'count' => ['label' => Craft::t('sprout-lists', 'Count')],
             'dateCreated' => ['label' => Craft::t('sprout-lists', 'Date Created')]
         ];

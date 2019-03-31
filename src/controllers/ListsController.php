@@ -5,7 +5,6 @@ namespace barrelstrength\sproutbaselists\controllers;
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
-use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -89,22 +88,10 @@ class ListsController extends Controller
     {
         $this->requirePostRequest();
 
-        $listId = Craft::$app->request->getBodyParam('listId');
+        $listType = Craft::$app->getRequest()->getBodyParam('listType');
+        $listType = SproutBaseLists::$app->lists->getListType($listType);
 
-        $list = new ListElement();
-
-        if ($listId !== null && $listId !== '') {
-            $list = Craft::$app->getElements()->getElementById($listId);
-        }
-
-        $list->name = Craft::$app->request->getBodyParam('name');
-        $list->handle = Craft::$app->request->getBodyParam('handle');
-        $list->type = Craft::$app->request->getBodyParam('type');
-
-        /**
-         * @var $listType ListType
-         */
-        $listType = SproutBaseLists::$app->lists->getListType($list->type);
+        $list = $listType->populateListFromPost();
 
         if ($listType->saveList($list)) {
             Craft::$app->getSession()->setNotice(Craft::t('sprout-lists', 'List saved.'));
@@ -132,10 +119,12 @@ class ListsController extends Controller
     public function actionDeleteList(): Response
     {
         $this->requirePostRequest();
-        $listId = Craft::$app->getRequest()->getBodyParam('listId');
 
-        $listType = SproutBaseLists::$app->lists->getListTypeById($listId);
-        $list = $listType->getListById($listId);
+        $list = new ListElement();
+        $list->type = Craft::$app->getRequest()->getRequiredBodyParam('listType');
+        $list->id = Craft::$app->getRequest()->getRequiredBodyParam('listId');
+
+        $listType = SproutBaseLists::$app->lists->getListTypeById($list->type);
 
         if ($listType->deleteList($list)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
@@ -172,21 +161,13 @@ class ListsController extends Controller
     {
         $this->requirePostRequest();
 
-        $subscription = new Subscription();
-        $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
-        $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
-        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
-        $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
-        $subscription->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
-        $subscription->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
-        $listTypeClass = Craft::$app->getRequest()->getBodyParam('listType', MailingList::class);
+        $listType = Craft::$app->getRequest()->getBodyParam('listType');
+        $listType = SproutBaseLists::$app->lists->getListType($listType);
 
-        $this->processEmail($subscription);
-
-        /** @var ListType $listType */
-        $listType = new $listTypeClass();
+        $subscription = $listType->populateSubscriptionFromPost();
 
         if (!$listType->add($subscription)) {
+
             if (Craft::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([
                     'success' => false,
@@ -214,21 +195,17 @@ class ListsController extends Controller
      * Removes a subscriber from a list
      *
      * @return Response|null
+     * @throws \yii\base\Exception
      * @throws \yii\web\BadRequestHttpException
      */
     public function actionRemove()
     {
         $this->requirePostRequest();
 
-        $subscription = new Subscription();
-        $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
-        $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
-        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
-        $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
-        $listTypeClass = Craft::$app->getRequest()->getBodyParam('listType', MailingList::class);
+        $listType = Craft::$app->getRequest()->getBodyParam('listType');
+        $listType = SproutBaseLists::$app->lists->getListType($listType);
 
-        /** @var ListType $listType */
-        $listType = new $listTypeClass();
+        $subscription = $listType->populateSubscriptionFromPost();
 
         if (!$listType->remove($subscription)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
@@ -252,22 +229,5 @@ class ListsController extends Controller
         }
 
         return $this->redirectToPostedUrl();
-    }
-
-    /**
-     * Check if we received an email via the itemId field and confirm the email is valid
-     *
-     * @param Subscription $subscription
-     */
-    protected function processEmail(Subscription $subscription)
-    {
-        if (!is_numeric($subscription->itemId) && !$subscription->email) {
-            $subscription->email = $subscription->itemId;
-        }
-
-        // Make sure an email is an email
-        if (!empty($subscription->email) && filter_var(trim($subscription->email), FILTER_VALIDATE_EMAIL) === false) {
-            $subscription->addError('email', Craft::t('sprout-base-lists', 'Email is invalid.'));
-        }
     }
 }

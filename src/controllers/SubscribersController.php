@@ -23,6 +23,7 @@ class SubscribersController extends Controller
      */
     public function actionEditSubscriberTemplate($id = null, $subscriber = null): Response
     {
+        /**  @var MailingList $listType */
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
         $listTypes[] = $listType;
 

@@ -86,5 +86,10 @@ return [
     'new-location/$1/$2' => 'new-location/$1/$2',
     'No Subscriber found with id: {id}' => 'No Subscriber found with id: {id}',
     'Unable to find or create List' => 'Unable to find or create List',
-    'Unable to create Subscriber' => 'Unable to create Subscriber'
+    'Unable to create Subscriber' => 'Unable to create Subscriber',
+    'New Mailing List' => 'New Mailing List',
+    'Item has already been added to list.' => 'Item has already been added to list.',
+    'Item {itemId} already exists on List ID {listId}.' => 'Item {itemId} already exists on List ID {listId}.',
+    'Add Mailing List' => 'Add Mailing List',
+    'List Item {itemId} already exists on List ID {listId}.' => 'List Item {itemId} already exists on List ID {listId}.'
 ];

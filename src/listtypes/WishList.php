@@ -44,7 +44,7 @@ class WishList extends BaseListType
      *
      * @return bool
      */
-    public function hasItem(Subscription $subscription): bool
+    public function isSubscribed(Subscription $subscription): bool
     {
         if (empty($subscription->listId)) {
             throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `listId` is required to check if an item is already on a List.'));

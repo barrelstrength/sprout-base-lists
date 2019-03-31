@@ -8,7 +8,6 @@ use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
-use craft\base\Element;
 use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
 
 /**
@@ -28,57 +27,25 @@ abstract class BaseListType extends ListType
      */
     public function getList(Subscription $subscription)
     {
-        $listElement = new ListElement();
-
-        // Assign id property if it is listId and handle property if string
-        if (is_numeric($subscription->listId)) {
-            $listElement->id = $subscription->listId;
-        } elseif (is_string($subscription->listId)) {
-            $listElement->handle = $subscription->listId;
-        }
-
-        /**
-         * See if we find:
-         * 1. List Element with matching ID
-         * 2. ANY Element with matching ID
-         * 3. List Element with matching handle
-         */
-        if ($listElement->id !== null) {
-            /** @var Element $element */
-            $element = Craft::$app->elements->getElementById($listElement->id);
-
-            if ($element === null) {
-                Craft::warning(Craft::t('sprout-base-lists', 'Unable to find a List with Element ID: {id}', [
-                    'id' => $listElement->id
-                ]), 'sprout-base-lists');
-
-                return null;
-            }
-
-            if (get_class($element) === ListElement::class) {
-                /** @noinspection PhpIncompatibleReturnTypeInspection */
-                return $element;
-            }
-
-            // If we found an Element that is not a Subscriber List, it should be mapped to a Subscriber List
-            // Check both the Element ID and the Handle as the Handle lets an Element be mapped to more than one list
-            $attributes = array_filter([
-                'sproutlists_lists.elementId' => $element->id,
-                'sproutlists_lists.handle' => $listElement->handle
+        $query = ListElement::find()
+            ->where([
+                'sproutlists_lists.type' => $subscription->listType
             ]);
 
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return ListElement::find()->where($attributes)->one();
+        if ($subscription->listId && $subscription->listHandle) {
+            $query->andWhere(['and',
+                ['sproutlists_lists.id' => $subscription->listId],
+                ['sproutlists_lists.handle' => $subscription->listHandle]
+            ]);
+        } else {
+            $query->andWhere(['or',
+                ['sproutlists_lists.id' => $subscription->listId],
+                ['sproutlists_lists.handle' => $subscription->listHandle]
+            ]);
         }
 
-        if ($listElement->handle !== null) {
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return ListElement::find()->where([
-                'sproutlists_lists.handle' => $listElement->handle
-            ])->one();
-        }
-
-        return null;
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $query->one();
     }
 
     /**
