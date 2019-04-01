@@ -92,11 +92,11 @@
 
             <div class="data">
                 <h5 class="heading">{{ "Date Created"|t('sprout-base-lists') }}</h5>
-                <div class="value">{{ list.dateCreated.localeDate() }} {{ list.dateCreated.localeTime() }}</div>
+                <div class="value">{{ list.dateCreated|datetime('short') }} {{ list.dateCreated|datetime('short') }}</div>
             </div>
             <div class="data">
                 <h5 class="heading">{{ "Date Updated"|t('sprout-base-lists') }}</h5>
-                <div class="value">{{ list.dateUpdated.localeDate() }} {{ list.dateUpdated.localeTime() }}</div>
+                <div class="value">{{ list.dateUpdated|datetime('short') }} {{ list.dateUpdated|datetime('short') }}</div>
             </div>
 
         </div>

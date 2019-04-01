@@ -316,11 +316,11 @@ class Subscriber extends Element
         {
             $itemIds = (new Query())
                 ->select('itemId')
-                ->from('sproutlists_subscriptions')
-                ->leftJoin('sproutlists_lists', 'sproutlists_subscriptions.listId = sproutlists_lists.id')
+                ->from('{{%sproutlists_subscriptions}} as subscription')
+                ->leftJoin('{{%sproutlists_lists}} as list', 'subscription.listId = list.id')
                 ->where([
-                    'sproutlists_lists.type' => MailingList::class,
-                    'sproutlists_subscriptions.itemId' => $this->id
+                    'list.type' => MailingList::class,
+                    'subscription.itemId' => $this->id
                 ])
                 ->distinct()
                 ->column();
