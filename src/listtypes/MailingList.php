@@ -2,19 +2,21 @@
 
 namespace barrelstrength\sproutbaselists\listtypes;
 
+use barrelstrength\sproutbaselists\base\ListTrait;
+use barrelstrength\sproutbaselists\base\ListType;
+use barrelstrength\sproutbaselists\base\SubscriberInterface;
 use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
-use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
+use craft\base\Element;
 use craft\elements\User;
 use craft\errors\ElementNotFoundException;
+use craft\helpers\StringHelper;
 use craft\helpers\Template;
-use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
 use yii\base\Exception;
-use yii\web\NotFoundHttpException;
 
 /**
  *
@@ -22,8 +24,10 @@ use yii\web\NotFoundHttpException;
  * @property array  $listsWithSubscribers
  * @property string $handle
  */
-class MailingList extends BaseListType
+class MailingList extends ListType implements SubscriberInterface
 {
+    use ListTrait;
+
     /**
      * @return string
      */
@@ -33,214 +37,49 @@ class MailingList extends BaseListType
     }
 
     /**
-     * @param Subscription $subscription
+     * Prepare the ListElement for the `saveList` method
      *
-     * @return bool|mixed
-     * @throws \Throwable
+     * @return ListElement
+     * @throws \yii\web\BadRequestHttpException
      */
-    public function add(Subscription $subscription): bool
+    public function populateListFromPost(): ListElement
     {
-        $subscriber = $this->getSubscriber($subscription);
+        $list = new ListElement();
+        $list->type = get_class($this);
+        $list->id = Craft::$app->getRequest()->getBodyParam('listId');
+        $list->name = Craft::$app->request->getRequiredBodyParam('name');
+        $list->handle = Craft::$app->request->getBodyParam('handle');
 
-        $transaction = Craft::$app->getDb()->beginTransaction();
+        // @todo - does this work properly for new and edit scenarios?
+        if ($list->id) {
+            /** @var Element $element */
+            $element = Craft::$app->getElements()->getElementById($list->id);
 
-        try {
-            // If our Subscriber doesn't exist, create a Subscriber Element
-            if ($subscriber === null) {
-                $subscriber = $this->createSubscriber($subscription, $this->settings->enableUserSync);
+            // Update where we store the Element ID if we don't have a Subscriber Element
+            if (get_class($element) !== Subscriber::class) {
+                $list->elementId = $element->id;
+                $list->id = null;
             }
-
-            $list = $this->getList($subscription);
-
-            // If our List doesn't exist, create a List Element
-            if ($list === null && $this->settings->enableAutoList) {
-                $list = new ListElement();
-                $list->type = __CLASS__;
-                $list->elementId = 1;
-                $list->name = $subscription->listHandle ?? 'list:'.$subscription->listId;
-                $list->handle = $subscription->listHandle ?? 'list:'.$subscription->listId;
-
-                $this->saveList($list);
-
-                $subscription->listId = $list->id;
-            }
-
-            if (!$list) {
-                throw new NotFoundHttpException(Craft::t('sprout-base-lists', 'Unable to find or create List'));
-            }
-
-            $subscriptionRecord = new SubscriptionRecord();
-            $subscriptionRecord->listId = $list->id;
-            $subscriptionRecord->itemId = $subscriber->id;
-
-            if (!$subscriber->validate() || !$list->validate()) {
-                $subscription->addErrors($subscriber->getErrors());
-                $subscription->addErrors($list->getErrors());
-                return false;
-            }
-
-            if ($subscriptionRecord->save()) {
-                $this->updateCount($subscriptionRecord->listId);
-            } else {
-                Craft::warning(Craft::t('sprout-base-lists', 'List Item {itemId} already exists on List ID {listId}.', [
-                    'listId' => $list->id,
-                    'itemId' => $subscriber->id
-                ]));
-            }
-
-            $transaction->commit();
-            return true;
-
-        } catch (\Throwable $e) {
-            $transaction->rollBack();
-            throw $e;
-        }
-    }
-
-    /**
-     * @param Subscription $subscription
-     *
-     * @return bool
-     */
-    public function remove(Subscription $subscription): bool
-    {
-        $list = $this->getList($subscription);
-
-        if (!$list) {
-            return false;
         }
 
-        $subscriber = $this->getSubscriber($subscription);
-
-        if (!$subscriber) {
-            return false;
+        if ($list->handle === null) {
+            $list->handle = StringHelper::toCamelCase($list->name);
         }
 
-        // Delete the subscription that matches the List and Subscriber IDs
-        $subscriptions = SubscriptionRecord::deleteAll([
-            'listId' => $list->id,
-            'itemId' => $subscriber->id
-        ]);
-
-        if ($subscriptions !== null) {
-            $this->updateCount();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**=
-     * @param Subscription $subscription
-     *
-     * @return bool
-     */
-    public function isSubscribed(Subscription $subscription): bool
-    {
-        if ($subscription->listId === null && $subscription->listHandle === null) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `listId` or `listHandle` are required to check if a User is subscribed to a List.'));
-        }
-
-        // We need a user ID or an email
-        if ($subscription->itemId === null && $subscription->email === null) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `itemId` or `email` are required to check if a User is subscribed to a List.'));
-        }
-
-        $list = $this->getList($subscription);
-
-        // If we don't find a matching list, no subscription exists
-        if ($list === null) {
-            return false;
-        }
-
-        // Make sure we set all the values we can
-        if (!empty($subscription->listId)) {
-            $subscription->listId = $list->id;
-        }
-
-        if (!empty($subscription->listHandle)) {
-            $subscription->listHandle = $list->handle;
-        }
-
-        $subscriber = $this->getSubscriber($subscription);
-
-        if ($subscriber === null) {
-            return false;
-        }
-
-        return SubscriptionRecord::find()->where([
-            'listId' => $list->id,
-            'itemId' => $subscriber->id
-        ])->exists();
-    }
-
-    /**
-     * Gets a subscriber
-     *
-     * @param Subscription $subscription
-     *
-     * @param bool         $sync
-     *
-     * @return Subscriber|\craft\base\ElementInterface|null|boolean
-     * @throws Exception
-     * @throws \Throwable
-     */
-    public function createSubscriber(Subscription $subscription, $sync = false)
-    {
-        $subscriber = new Subscriber();
-        $subscriber->email = $subscription->email;
-        $subscriber->firstName = $subscription->firstName ?? null;
-        $subscriber->lastName = $subscription->lastName ?? null;
-
-        $user = null;
-
-        // If enable user sync is on look for user element and assign it to userId column
-        if ($sync) {
-            // Try to find a matching User Element
-            if ($subscription->itemId) {
-                $user = Craft::$app->elements->getElementById($subscriber->userId, User::class);
-            } elseif ($subscriber->email) {
-                $user = Craft::$app->getUsers()->getUserByUsernameOrEmail($subscriber->email);
-            }
-
-            $subscriber->userId = $user->id ?? null;
-
-            // Assign First and Last name again and values from user profile as fallbacks
-            $subscriber->firstName = $subscriber->firstName ?? $user->firstName ?? null;
-            $subscriber->lastName = $subscriber->lastName ?? $user->lastName ?? null;
-        }
-
-        try {
-            $this->saveSubscriber($subscriber);
-        } catch (\Exception $exception) {
-            throw new NotFoundHttpException(Craft::t('sprout-base-lists', 'Unable to create Subscriber'));
-        }
-
-        return $subscriber;
-    }
-
-    /**
-     * Gets a subscriber with a given id.
-     *
-     * @param $id
-     *
-     * @return Subscriber|null
-     */
-    public function getSubscriberById($id)
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return Craft::$app->getElements()->getElementById($id, Subscriber::class);
+        return $list;
     }
 
     /**
      * Get a Subscriber Element based on a subscription
      *
      * @param Subscription $subscription
+     * @param bool         $createIfNotFound
      *
-     * @return Subscriber|null
+     * @return Subscriber|bool|\craft\base\ElementInterface|\yii\base\Model|null
+     * @throws Exception
+     * @throws \Throwable
      */
-    public function getSubscriber(Subscription $subscription)
+    public function getSubscriberOrItem($subscription, $createIfNotFound = false)
     {
         $subscriberId = $subscription->itemId;
 
@@ -262,6 +101,21 @@ class MailingList extends BaseListType
         /** @var Subscriber $subscriber */
         $subscriber = $query->one();
 
+        // If our Subscriber doesn't exist, create a Subscriber Element
+        if ($subscriber === null && $createIfNotFound) {
+            $subscriber = new Subscriber();
+            $subscriber->userId = $subscription->itemId;
+            $subscriber->email = $subscription->email;
+            $subscriber->firstName = $subscription->firstName ?? null;
+            $subscriber->lastName = $subscription->lastName ?? null;
+
+            $subscriber = $this->saveSubscriber($subscriber);
+        }
+
+        if ($subscriber === null) {
+            return null;
+        }
+
         // Only assign profile values when we add a Subscriber if we have values
         // Don't overwrite any profile attributes with empty values
         if (!empty($subscription->firstName)) {
@@ -276,97 +130,28 @@ class MailingList extends BaseListType
     }
 
     /**
-     * Deletes a subscriber.
-     *
-     * @param $id
-     *
-     * @return bool
-     * @throws ElementNotFoundException
-     * @throws \Throwable
+     * @return Subscriber
      */
-    public function deleteSubscriberById($id): bool
+    public function populateSubscriberFromPost(): Subscriber
     {
-        try {
-            Craft::$app->getElements()->deleteElementById($id);
-            SubscriberRecord::deleteAll('id = :subscriberId', [':subscriberId' => $id]);
-            SubscriptionRecord::deleteAll('listId = :listId', [':listId' => $id]);
+        $subscriber = new Subscriber();
 
-            $this->updateCount();
+        $subscriberId = Craft::$app->getRequest()->getBodyParam('subscriberId');
 
-            return true;
-        } catch (\Exception $e) {
-            throw new ElementNotFoundException(Craft::t('sprout-base-lists', 'Unable to delete Subscriber.'));
-        }
-    }
+        if ($subscriberId !== null) {
+            $element = Craft::$app->getElements()->getElementById($subscriberId);
 
-    /**
-     * @param ListElement $list
-     *
-     * @return array|mixed
-     * @throws \Exception
-     */
-    public function getItems(ListElement $list)
-    {
-        if (empty($list->type)) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: "type" is required by the getSubscribers variable.'));
-        }
-
-        if (empty($list->handle)) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: "listHandle" is required by the getSubscribers variable.'));
-        }
-
-        $subscribers = [];
-
-        if ($list === null) {
-            return $subscribers;
-        }
-
-        $listRecord = ListElementRecord::find()->where([
-            'type' => $list->type,
-            'handle' => $list->handle
-        ])->one();
-
-        /**
-         * @var $listRecord ListElementRecord
-         */
-        if ($listRecord != null) {
-            $subscribers = $listRecord->getListsWithSubscribers()->all();
-
-            return $subscribers;
-        }
-
-        return $subscribers;
-    }
-
-    /**
-     * Returns an array of all lists that have subscribers.
-     *
-     * @return array
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getListsWithSubscribers(): array
-    {
-        $listElementRecords = ListElementRecord::find()->all();
-
-        if (!$listElementRecords) {
-            return [];
-        }
-
-        $lists = [];
-
-        /** @var $listElementRecord ListElementRecord */
-        foreach ($listElementRecords as $listElementRecord) {
-
-            $subscribers = $listElementRecord->getListsWithSubscribers()->all();
-
-            if (empty($subscribers)) {
-                continue;
+            if ($element) {
+                $subscriber = $element;
             }
-
-            $lists[] = $listElementRecord;
         }
 
-        return $lists;
+        $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');
+        $subscriber->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
+        $subscriber->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
+        $subscriber->listElements = Craft::$app->getRequest()->getBodyParam('mailingList.listElements');
+
+        return $subscriber;
     }
 
     /**
@@ -375,22 +160,23 @@ class MailingList extends BaseListType
      * @param $subscriberId
      *
      * @return string|\Twig_Markup
-     * @throws \Exception
+     * @throws Exception
+     * @throws \Throwable
      * @throws \Twig_Error_Loader
      */
-    public function getListElementsHtml($subscriberId)
+    public function getSubscriberSettingsHtml($subscriberId)
     {
         $subscriber = null;
         $listIds = [];
 
         if ($subscriberId !== null) {
-            /**
-             * @var $subscriber Subscriber
-             */
-            $subscriber = $this->getSubscriberById($subscriberId);
+            $subscription = new Subscription();
+            $subscription->itemId = $subscriberId;
+
+            $subscriber = $this->getSubscriberOrItem($subscription);
 
             if ($subscriber) {
-                $listIds = $subscriber->getListIds();
+                $listIds = $subscriber->getLists(true);
             }
         }
 
@@ -423,55 +209,6 @@ class MailingList extends BaseListType
         return Template::raw($html);
     }
 
-    // Subscriptions
-    // =========================================================================
-
-    /**
-     * Saves a subscription
-     *
-     * @param Subscriber $subscriber
-     *
-     * @return bool
-     * @throws \Exception
-     */
-    public function saveSubscriptions(Subscriber $subscriber)
-    {
-        try {
-            if (!empty($subscriber->listElements)) {
-                foreach ($subscriber->listElements as $listId) {
-                    $list = $this->getListById($listId);
-
-                    if ($list) {
-                        $subscriptionRecord = new SubscriptionRecord();
-                        $subscriptionRecord->listId = $list->id;
-                        $subscriptionRecord->itemId = $subscriber->id;
-
-                        if (!$subscriptionRecord->save(false)) {
-
-                            SproutBaseLists::error($subscriptionRecord->getErrors());
-
-                            throw new Exception(Craft::t('sprout-lists', 'Unable to save subscription.'));
-                        }
-                    } else {
-                        throw new Exception(Craft::t('sprout-lists', 'The Subscriber List with id {listId} does not exists.', [
-                            'listId' => $listId
-                        ]));
-                    }
-                }
-            }
-
-            $this->updateCount();
-
-            return true;
-        } catch (\Exception $e) {
-            Craft::error($e->getMessage());
-            throw $e;
-        }
-    }
-
-    // Subscriber
-    // =========================================================================
-
     /**
      * Saves a subscriber
      *
@@ -484,26 +221,82 @@ class MailingList extends BaseListType
      */
     public function saveSubscriber(Subscriber $subscriber): bool
     {
-        if (!$subscriber->validate(null, false)) {
+        if (!$subscriber->validate()) {
             return false;
         }
 
-        if (Craft::$app->getElements()->saveElement($subscriber)) {
-            $this->saveSubscriptions($subscriber);
+        $subscriber = $this->updateSubscriberForUserSync($subscriber);
 
+        if (Craft::$app->getElements()->saveElement($subscriber)) {
+            $this->updateCount();
             return true;
         }
 
         return false;
     }
 
-
-    public function cpBeforeSaveSubscriber($subscriber)
+    /**
+     * Deletes a subscriber.
+     *
+     * @param Subscriber $subscriber
+     *
+     * @return bool
+     * @throws ElementNotFoundException
+     * @throws \Throwable
+     */
+    public function deleteSubscriber(Subscriber $subscriber): bool
     {
-        SubscriptionRecord::deleteAll('itemId = :itemId', [
-            ':itemId' => $subscriber->id
-        ]);
+        $transaction = Craft::$app->getDb()->beginTransaction();
 
-        return null;
+        try {
+            Craft::$app->getElements()->deleteElementById($subscriber->id);
+
+            // Clean up everything else that relates to this subscriber
+            SubscriberRecord::deleteAll('id = :subscriberId', [
+                ':subscriberId' => $subscriber->id
+            ]);
+            SubscriptionRecord::deleteAll('listId = :listId', [
+                ':listId' => $subscriber->id
+            ]);
+
+            $this->updateCount();
+
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw new ElementNotFoundException(Craft::t('sprout-base-lists', 'Unable to delete Subscriber.'));
+        }
+    }
+
+    /**
+     * If enable user sync is on look for user element and assign it to userId column
+     *
+     * @param Subscriber $subscriber
+     *
+     * @return Subscriber $subscriber
+     */
+    public function updateSubscriberForUserSync(Subscriber $subscriber): Subscriber
+    {
+        if (!$this->settings->enableUserSync) {
+            $subscriber->userId = null;
+            return $subscriber;
+        }
+
+        $user = null;
+
+        if ($subscriber->userId) {
+            $user = Craft::$app->elements->getElementById($subscriber->userId, User::class);
+        } elseif ($subscriber->email) {
+            $user = Craft::$app->getUsers()->getUserByUsernameOrEmail($subscriber->email);
+        }
+
+        $subscriber->userId = $user->id ?? null;
+
+        // Assign First and Last name again and values from user profile as fallbacks
+        $subscriber->firstName = $subscriber->firstName ?? $user->firstName ?? null;
+        $subscriber->lastName = $subscriber->lastName ?? $user->lastName ?? null;
+
+        return $subscriber;
     }
 }

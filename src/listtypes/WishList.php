@@ -2,13 +2,13 @@
 
 namespace barrelstrength\sproutbaselists\listtypes;
 
+use barrelstrength\sproutbaselists\base\ListTrait;
+use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\ListElement;
-use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
-use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use Craft;
 use craft\base\Element;
-use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
+use craft\helpers\StringHelper;
 
 /**
  *
@@ -16,8 +16,10 @@ use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
  * @property array  $listsWithSubscribers
  * @property string $handle
  */
-class WishList extends BaseListType
+class WishList extends ListType
 {
+    use ListTrait;
+
     /**
      * @return string
      */
@@ -26,67 +28,46 @@ class WishList extends BaseListType
         return Craft::t('sprout-lists', 'Wish List');
     }
 
-    public function add(Subscription $subscription): bool
-    {
-
-//      Default List ID to Craft::$app->getUser()->getIdentity()->id if none is provided.
-
-        return false;
-    }
-
-    public function remove(Subscription $subscription): bool
-    {
-        return false;
-    }
-
-    /**=
-     * @param Subscription $subscription
+    /**
+     * Prepare the ListElement for the `saveList` method
      *
-     * @return bool
+     * @return ListElement
+     * @throws \yii\web\BadRequestHttpException
      */
-    public function isSubscribed(Subscription $subscription): bool
+    public function populateListFromPost(): ListElement
     {
-        if (empty($subscription->listId)) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `listId` is required to check if an item is already on a List.'));
+        $list = new ListElement();
+        $list->type = get_class($this);
+        $list->id = Craft::$app->getRequest()->getBodyParam('listId');
+        $list->name = Craft::$app->request->getRequiredBodyParam('name');
+        $list->handle = Craft::$app->request->getBodyParam('handle');
+
+        // @todo - does this work properly for new and edit scenarios?
+        // @todo - Dynamically set USER? Craft::$app->getUser()->getIdentity()->id ?? null
+//        if ($list->id) {
+//            /** @var Element $element */
+//            $element = Craft::$app->getElements()->getElementById($list->id);
+//
+//            // Update where we store the Element ID if we don't have a Subscriber Element
+//            if (get_class($element) !== User::class || get_class($element) !== Subscriber::class) {
+//                $list->elementId = $element->id;
+//                $list->id = null;
+//            }
+//        }
+
+        if ($list->handle === null) {
+            $list->handle = StringHelper::toCamelCase($list->name);
         }
 
-        // We need a user ID or an email
-        if ($subscription->itemId === null) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: `itemId` is required to check if an item is already on a List.'));
-        }
-
-        $list = $this->getList($subscription);
-
-        // If we don't find a matching list, no subscription exists
-        if ($list === null) {
-            return false;
-        }
-
-        // Make sure we set all the values we can
-        $subscription->listId = $list->id;
-        $subscription->listHandle = $list->handle;
-
-        $subscriber = new Subscriber();
-        $subscriber->userId = $subscription->itemId;
-
-        $subscriber = $this->getSubscriber($subscriber);
-
-        if ($subscriber === null) {
-            return false;
-        }
-
-        return SubscriptionRecord::find()->where([
-            'listId' => $list->id,
-            'itemId' => $subscriber->id
-        ])->exists();
+        return $list;
     }
 
     /**
-     * @param Subscriber $subscriber
+     * @param Subscription $subscription
      *
      * @return Element|null
      */
-    public function getSubscriber(Subscriber $subscriber)
+    public function getSubscriberOrItem($subscription)
     {
         /**
          * See if we find:
@@ -95,13 +76,13 @@ class WishList extends BaseListType
          * 3. Any Element with a matching ID
          * 4.
          */
-        if (is_numeric($subscriber->userId)) {
+        if (is_numeric($subscription->listId)) {
             /** @var Element $element */
-            $element = Craft::$app->elements->getElementById($subscriber->userId);
+            $element = Craft::$app->elements->getElementById($subscription->listId);
 
             if ($element === null) {
                 Craft::warning(Craft::t('sprout-base-lists', 'Unable to find an Element with ID: {id}', [
-                    'id' => $subscriber->userId
+                    'id' => $subscription->listId
                 ]), 'sprout-base-lists');
 
                 return null;
@@ -112,44 +93,5 @@ class WishList extends BaseListType
         }
 
         return null;
-    }
-
-    /**
-     * @param ListElement $list
-     *
-     * @return array|mixed
-     * @throws \Exception
-     */
-    public function getItems(ListElement $list)
-    {
-        if (empty($list->type)) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: "type" is required by the getSubscribers variable.'));
-        }
-
-        if (empty($list->id)) {
-            throw new \InvalidArgumentException(Craft::t('sprout-lists', 'Missing argument: "id" is required by the getSubscribers variable.'));
-        }
-
-        $subscribers = [];
-
-        if ($list === null) {
-            return $subscribers;
-        }
-
-        $listRecord = ListElementRecord::find()->where([
-            'id' => $list->id,
-            'type' => $list->type
-        ])->one();
-
-        /**
-         * @var $listRecord ListElementRecord
-         */
-        if ($listRecord != null) {
-            $subscribers = $listRecord->getListsWithSubscribers()->all();
-
-            return $subscribers;
-        }
-
-        return $subscribers;
     }
 }
