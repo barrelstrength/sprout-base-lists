@@ -7,6 +7,7 @@ use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\actions\DeleteSubscriber;
 use barrelstrength\sproutbaselists\elements\db\SubscriberQuery;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\listtypes\WishList;
 use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
@@ -310,23 +311,31 @@ class Subscriber extends Element
                 ->execute();
         }
 
-        // Resave the Subscriptions for this Subscriber
-        if ($this->listElements) {
+        // @todo - Temporary: We should support updating multiple lists at once on the front-end as well
+        if (Craft::$app->getRequest()->getIsCpRequest())
+        {
+            $itemIds = (new Query())
+                ->select('itemId')
+                ->from('sproutlists_subscriptions')
+                ->leftJoin('sproutlists_lists', 'sproutlists_subscriptions.listId = sproutlists_lists.id')
+                ->where([
+                    'sproutlists_lists.type' => MailingList::class,
+                    'sproutlists_subscriptions.itemId' => $this->id
+                ])
+                ->distinct()
+                ->column();
 
-            // Clean up everything else that relates to this subscriber
-            // @todo - may need to improve this and limit it to List Type... review.
-            Subscription::deleteAll('itemId = :itemId', [
-                ':itemId' => $this->id
-            ]);
+            Subscription::deleteAll(['itemId' => $itemIds]);
 
-            foreach ($this->listElements as $listId) {
+            if ($this->listElements) {
+                foreach ($this->listElements as $listId) {
+                    $subscriptionRecord = new Subscription();
+                    $subscriptionRecord->listId = $listId;
+                    $subscriptionRecord->itemId = $this->id;
 
-                $subscriptionRecord = new Subscription();
-                $subscriptionRecord->listId = $listId;
-                $subscriptionRecord->itemId = $this->id;
-
-                if (!$subscriptionRecord->save(false)) {
-                    throw new Exception(Craft::t('sprout-base-lists', 'Unable to save subscription while saving subscriber.'));
+                    if (!$subscriptionRecord->save(false)) {
+                        throw new Exception(Craft::t('sprout-base-lists', 'Unable to save subscription while saving subscriber.'));
+                    }
                 }
             }
         }
