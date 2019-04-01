@@ -38,4 +38,14 @@ class ListElement extends ActiveRecord
     {
         return $this->hasOne(Element::class, ['id' => 'id']);
     }
+
+    /**
+     * @return array
+     */
+    public function rules(): array
+    {
+        return [
+            [['elementId', 'handle'], 'unique', 'targetAttribute' => ['elementId', 'handle']]
+        ];
+    }
 }
