@@ -90,13 +90,13 @@
 
         {% for listType in listTypes %}
 
-            {% set subscriptionSettingsHtml = listType.getSubscriptionSettingsHtml(subscriberId) %}
+            {% set subscriberSettingsHtml = listType.getSubscriberSettingsHtml(subscriberId) %}
 
-            {% if subscriptionSettingsHtml != '' %}
+            {% if subscriberSettingsHtml != '' %}
 
                 <h2>{{ listType.displayName() }}</h2>
 
-                {{ subscriptionSettingsHtml }}
+                {{ subscriberSettingsHtml }}
 
             {% else %}
 

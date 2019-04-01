@@ -84,7 +84,7 @@ class Lists extends Component
     {
         $listRecord = null;
 
-        if (is_int($listId)) {
+        if (is_numeric($listId)) {
             $listRecord = ListsRecord::findOne($listId);
         } else if (is_string($listId)) {
             $listRecord = ListsRecord::find()->where([
