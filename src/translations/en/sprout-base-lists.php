@@ -91,5 +91,7 @@ return [
     'Item has already been added to list.' => 'Item has already been added to list.',
     'Item {itemId} already exists on List ID {listId}.' => 'Item {itemId} already exists on List ID {listId}.',
     'Add Mailing List' => 'Add Mailing List',
-    'List Item {itemId} already exists on List ID {listId}.' => 'List Item {itemId} already exists on List ID {listId}.'
+    'List Item {itemId} already exists on List ID {listId}.' => 'List Item {itemId} already exists on List ID {listId}.',
+    'Create a Subscriber Lists and your lists will display below.' => 'Create a Subscriber Lists and your lists will display below.',
+    'Unable to save subscription while saving subscriber.' => 'Unable to save subscription while saving subscriber.'
 ];
