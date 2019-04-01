@@ -47,9 +47,7 @@ class DeleteSubscriber extends Delete
 
         // Delete the users
         foreach ($subscribers as $subscriber) {
-            $id = $subscriber->id;
-
-            $listType->deleteSubscriberById($id);
+            $listType->deleteSubscriber($subscriber);
         }
 
         $this->setMessage(Craft::t('sprout-lists', 'Subscriber(s) deleted.'));

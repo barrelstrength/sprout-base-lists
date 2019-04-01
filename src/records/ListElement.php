@@ -38,16 +38,4 @@ class ListElement extends ActiveRecord
     {
         return $this->hasOne(Element::class, ['id' => 'id']);
     }
-
-    /**
-     * @todo - move this off the ListElement record. Subscribers are a separate concept.
-     *
-     * @return ActiveQueryInterface
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getListsWithSubscribers(): ActiveQueryInterface
-    {
-        return $this->hasMany(Subscriber::class, ['id' => 'itemId'])
-            ->viaTable('{{%sproutlists_subscriptions}}', ['listId' => 'id']);
-    }
 }

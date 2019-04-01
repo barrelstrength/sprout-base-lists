@@ -13,6 +13,7 @@ use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Element;
 use Craft;
+use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\UrlHelper;
 use craft\validators\UniqueValidator;
@@ -64,11 +65,6 @@ class Subscriber extends Element
      * @var array
      */
     public $listElements;
-
-    /**
-     * @var array
-     */
-    private $listElementIds;
 
     /**
      * @return string
@@ -130,10 +126,7 @@ class Subscriber extends Element
 
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
 
-        /**
-         * @var ListType|MailingList $listType
-         */
-        $lists = $listType->getListsWithSubscribers();
+        $lists = ListElement::findAll();
 
         if (!empty($lists)) {
             $sources[] = [
@@ -209,56 +202,25 @@ class Subscriber extends Element
     }
 
     /**
-     * @return array
-     * @throws \Exception
-     */
-    public function getListIds(): array
-    {
-        if ($this->listElementIds) {
-            return $this->listElementIds;
-        }
-
-        $listElements = $this->getLists();
-
-        if (!count($listElements)) {
-            return [];
-        }
-
-        foreach ($listElements as $list) {
-            $this->listElementIds[] = $list->id;
-        }
-
-        return $this->listElementIds;
-    }
-
-    /**
      * Gets an array of SproutLists_ListModels to which this subscriber is subscribed.
      *
+     * @param bool $onlyListIds
+     *
      * @return array
-     * @throws \Exception
      */
-    public function getLists(): array
+    public function getLists($onlyListIds = false): array
     {
-        $lists = [];
+        $listIds = (new Query())
+            ->select(['listId'])
+            ->from(['{{%sproutlists_subscriptions}}'])
+            ->where(['itemId' => $this->id])
+            ->column();
 
-        $subscriptions = Subscription::find()->where([
-            'itemId' => $this->id
-        ])->all();
-
-        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
-
-        if (count($subscriptions)) {
-            /** @var Subscription $subscription */
-            foreach ($subscriptions as $subscription) {
-                /**
-                 * @todo - move query out of loop.
-                 * @var $listType ListType
-                 */
-                $lists[] = $listType->getListById($subscription->listId);
-            }
+        if ($onlyListIds) {
+            return $listIds;
         }
 
-        return $lists;
+        return ListElement::find()->id($listIds)->all();
     }
 
     /**
@@ -285,11 +247,6 @@ class Subscriber extends Element
     {
         /** @var Settings $settings */
         $settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
-
-        if (!$settings) {
-            parent::afterSave($isNew);
-            return;
-        }
 
         // Get the list record
         if (!$isNew) {
@@ -351,6 +308,27 @@ class Subscriber extends Element
                 false
             )
                 ->execute();
+        }
+
+        // Resave the Subscriptions for this Subscriber
+        if ($this->listElements) {
+
+            // Clean up everything else that relates to this subscriber
+            // @todo - may need to improve this and limit it to List Type... review.
+            Subscription::deleteAll('itemId = :itemId', [
+                ':itemId' => $this->id
+            ]);
+
+            foreach ($this->listElements as $listId) {
+
+                $subscriptionRecord = new Subscription();
+                $subscriptionRecord->listId = $listId;
+                $subscriptionRecord->itemId = $this->id;
+
+                if (!$subscriptionRecord->save(false)) {
+                    throw new Exception(Craft::t('sprout-base-lists', 'Unable to save subscription while saving subscriber.'));
+                }
+            }
         }
 
         parent::afterSave($isNew);

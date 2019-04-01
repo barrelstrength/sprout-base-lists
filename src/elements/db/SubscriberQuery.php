@@ -2,7 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\elements\db;
 
-use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
+use craft\db\Query;
 use craft\elements\db\ElementQuery;
 
 class SubscriberQuery extends ElementQuery
@@ -18,6 +18,7 @@ class SubscriberQuery extends ElementQuery
     protected function beforePrepare(): bool
     {
         $this->joinElementTable('sproutlists_subscribers');
+
         $this->query->select([
             'sproutlists_subscribers.userId',
             'sproutlists_subscribers.email',
@@ -27,19 +28,13 @@ class SubscriberQuery extends ElementQuery
             'sproutlists_subscribers.dateUpdated'
         ]);
 
-        // @todo - can we optimize this query? This feels really inefficient
         if ($this->listId) {
-            // Get all subscriptions for this list
-            $subscriptions = SubscriptionRecord::find()
-                ->select('itemId')
-                ->where([
-                    'listId' => $this->listId
-                ])->all();
 
-            // Filter so we only have ids
-            $subscriberIds = array_map(function($subscriptions) {
-                return $subscriptions->itemId;
-            }, $subscriptions);
+            $subscriberIds = (new Query())
+                ->select(['itemId'])
+                ->from(['{{%sproutlists_subscriptions}}'])
+                ->where(['listId' => $this->listId])
+                ->column();
 
             // Only return subscribers that match this query
             $this->subQuery->andWhere([

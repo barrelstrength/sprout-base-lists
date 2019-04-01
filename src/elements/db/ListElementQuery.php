@@ -14,6 +14,7 @@ class ListElementQuery extends ElementQuery
     protected function beforePrepare(): bool
     {
         $this->joinElementTable('sproutlists_lists');
+
         $this->query->select([
             'sproutlists_lists.elementId',
             'sproutlists_lists.type',

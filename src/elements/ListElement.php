@@ -144,15 +144,24 @@ class ListElement extends Element
     /**
      * @inheritdoc
      */
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'name' => ['label' => Craft::t('sprout-lists', 'Name')],
+            'count' => ['label' => Craft::t('sprout-lists', 'Count')],
+            'dateCreated' => ['label' => Craft::t('sprout-lists', 'Date Created')]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected static function defineTableAttributes(): array
     {
         $attributes = [
             'name' => ['label' => Craft::t('sprout-lists', 'Name')],
             'handle' => ['label' => Craft::t('sprout-lists', 'List Handle')],
-
-            // @todo - this works for Mailing Lists but Not Wish Lists
-            // 'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
-
+            'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
             'count' => ['label' => Craft::t('sprout-lists', 'Count')],
             'dateCreated' => ['label' => Craft::t('sprout-lists', 'Date Created')]
         ];

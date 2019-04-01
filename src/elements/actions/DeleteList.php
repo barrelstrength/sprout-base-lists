@@ -41,9 +41,7 @@ class DeleteList extends Delete
 
         // Delete the users
         foreach ($lists as $list) {
-            $listType = SproutBaseLists::$app->lists->getListTypeById($list->id);
-            $list = $listType->getListById($list->id);
-
+            $listType = SproutBaseLists::$app->lists->getListType($list->type);
             $listType->deleteList($list);
         }
 

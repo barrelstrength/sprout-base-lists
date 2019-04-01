@@ -92,10 +92,6 @@ class Lists extends Component
             ])->one();
         }
 
-        if ($listRecord === null) {
-            return new MailingList();
-        }
-
         return new $listRecord->type;
     }
 }
