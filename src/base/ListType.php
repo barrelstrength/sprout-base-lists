@@ -6,11 +6,8 @@ use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\models\Subscription;
-use barrelstrength\sproutbaselists\records\Subscriber;
 use craft\base\Component;
-use Craft;
-use craft\base\Element;
-use craft\helpers\StringHelper;
+use yii\base\Model;
 
 /**
  *
@@ -41,74 +38,11 @@ abstract class ListType extends Component
     }
 
     /**
-     * Prepare the ListElement for the `saveList` method
-     *
-     * @return ListElement
-     * @throws \yii\web\BadRequestHttpException
-     */
-    public function populateListFromPost(): ListElement
-    {
-        $list = new ListElement();
-        $list->type = get_class($this);
-        $list->id = Craft::$app->getRequest()->getBodyParam('listId');
-        $list->name = Craft::$app->request->getRequiredBodyParam('name');
-        $list->handle = Craft::$app->request->getBodyParam('handle');
-
-        if ($list->id) {
-            /** @var Element $element */
-            $element = Craft::$app->getElements()->getElementById($list->id);
-
-            // Update where we store the Element ID if we don't have a Subscriber Element
-            if (get_class($element) !== Subscriber::class) {
-                $list->elementId = $element->id;
-                $list->id = null;
-            }
-        }
-
-        if ($list->handle === null) {
-            $list->handle = StringHelper::toCamelCase($list->name);
-        }
-
-        return $list;
-    }
-
-    /**
-     * Prepare the Subscription model for the `add` and `remove` methods.
+     * Prepare the Subscription model for the `add` and `remove` methods
      *
      * @return Subscription
      */
-    public function populateSubscriptionFromPost(): Subscription
-    {
-        $subscription = new Subscription();
-        $subscription->listType = get_class($this);
-        $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
-        $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
-        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
-        $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
-        $subscription->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
-        $subscription->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
-
-        return $subscription;
-    }
-
-    /**
-     * Prepare the Subscription model for the `isSubscribed` method
-     *
-     * @param array $criteria
-     *
-     * @return Subscription
-     */
-    public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): Subscription
-    {
-        $subscription = new Subscription();
-        $subscription->listType = get_class($this);
-        $subscription->listId = $criteria['listId'] ?? null;
-        $subscription->listHandle = $criteria['listHandle'] ?? null;
-        $subscription->itemId = $criteria['itemId'] ?? null;
-        $subscription->email = $criteria['email'] ?? null;
-
-        return $subscription;
-    }
+    abstract public function populateSubscriptionFromPost(): Subscription;
 
     /**
      * Subscribe a user to a list for this List Type
@@ -129,35 +63,60 @@ abstract class ListType extends Component
     abstract public function remove(Subscription $subscription): bool;
 
     /**
-     * @param ListElement $list
-     *
-     * @return mixed
+     * @param Subscription $subscription
      */
-    abstract public function saveList(ListElement $list);
+    abstract public function getList(Subscription $subscription);
+
+    /**
+     * Prepare the ListElement for the `saveList` method
+     *
+     * @return ListElement
+     */
+    abstract public function populateListFromPost(): ListElement;
 
     /**
      * @param ListElement $list
      *
-     * @return mixed
+     * @return bool
      */
-    abstract public function deleteList(ListElement $list);
+    abstract public function saveList(ListElement $list): bool;
 
     /**
-     * @param int $listId
+     * @param ListElement $list
      *
-     * @return mixed
+     * @return bool
      */
-    abstract public function getListById(int $listId);
+    abstract public function deleteList(ListElement $list): bool;
 
     /**
-     * Get subscribers on a given list.
+     * @param Model $subscription
+     *
+     * @return Model|null
+     */
+    abstract public function getSubscriberOrItem($subscription);
+
+    /**
+     * Get all subscriptions for a given list.
      *
      * @param ListElement $list
      *
      * @return mixed
      * @internal param $criteria
      */
-    abstract public function getItems(ListElement $list);
+    abstract public function getSubscriptions(ListElement $list);
+
+    /**
+     * Prepare the Subscription model for the `isSubscribed` method.
+     * The Subscription info is passed as `params` to the isSubscribed method.
+     *
+     * @example
+     * {% if craft.sproutLists.isSubscribed(params) %} ... {% endif %}
+     *
+     * @param array $criteria
+     *
+     * @return Subscription
+     */
+    abstract public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): Subscription;
 
     /**
      * Check if a user is subscribed to a list
@@ -171,19 +130,7 @@ abstract class ListType extends Component
     /**
      * @param ListElement $list
      *
-     * @return mixed
+     * @return int
      */
-    abstract public function getCount(ListElement $list);
-
-    /**
-     * Runs on CP Panel controller to avoid incorrect values on checkbox values
-     *
-     * @param $subscriber
-     *
-     * @return null
-     */
-    public function cpBeforeSaveSubscriber($subscriber)
-    {
-        return null;
-    }
+    abstract public function getCount(ListElement $list): int;
 }
