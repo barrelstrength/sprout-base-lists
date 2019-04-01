@@ -52,7 +52,7 @@
         <input type="hidden" name="subscriberId" value="{{ subscriberId }}">
     {% endif %}
 
-    <input type="hidden" name="type" value="barrelstrength\sproutbaselists\listtypes\MailingList">
+    <input type="hidden" name="listType" value="barrelstrength\sproutbaselists\listtypes\MailingList">
 
     <section id="default-fields">
 
@@ -90,17 +90,17 @@
 
         {% for listType in listTypes %}
 
-            {% set listElementsHtml = listType.getListElementsHtml(subscriberId) %}
+            {% set subscriptionSettingsHtml = listType.getSubscriptionSettingsHtml(subscriberId) %}
 
-            {% if listElementsHtml != '' %}
+            {% if subscriptionSettingsHtml != '' %}
 
                 <h2>{{ listType.displayName() }}</h2>
 
-                {{ listElementsHtml }}
+                {{ subscriptionSettingsHtml }}
 
             {% else %}
 
-                <p>{{ "Setup your Subscriber Lists and they will display below."|t('sprout-base-lists') }}</p>
+                <p>{{ "Create a Subscriber Lists and your lists will display below."|t('sprout-base-lists') }}</p>
 
                 <ul>
                     <li><input type="checkbox" class="checkbox" disabled>

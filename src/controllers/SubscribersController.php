@@ -2,9 +2,10 @@
 
 namespace barrelstrength\sproutbaselists\controllers;
 
-use barrelstrength\sproutbaselists\base\ListType;
+use barrelstrength\sproutbaselists\base\SubscriberInterface;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\web\Controller;
 use Craft;
@@ -20,6 +21,7 @@ class SubscribersController extends Controller
      *
      * @return Response
      * @throws \Exception
+     * @throws \Throwable
      */
     public function actionEditSubscriberTemplate($id = null, $subscriber = null): Response
     {
@@ -28,7 +30,10 @@ class SubscribersController extends Controller
         $listTypes[] = $listType;
 
         if ($id != null AND $subscriber == null) {
-            $subscriber = $listType->getSubscriberById($id);
+            $subscription = new Subscription();
+            $subscription->itemId = $id;
+
+            $subscriber = $listType->getSubscriberOrItem($subscription);
         }
 
         return $this->renderTemplate('sprout-base-lists/subscribers/_edit', [
@@ -40,9 +45,7 @@ class SubscribersController extends Controller
     /**
      * Saves a subscriber
      *
-     * @return Response | null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
+     * @return Response|null
      * @throws \craft\errors\MissingComponentException
      * @throws \yii\base\Exception
      * @throws \yii\web\BadRequestHttpException
@@ -51,36 +54,11 @@ class SubscribersController extends Controller
     {
         $this->requirePostRequest();
 
-        $subscriberId = Craft::$app->getRequest()->getBodyParam('subscriberId');
+        /** @var SubscriberInterface $listType */
+        $listType = Craft::$app->getRequest()->getBodyParam('listType');
+        $listType = SproutBaseLists::$app->lists->getListType($listType);
 
-        $subscriber = new Subscriber();
-
-        if ($subscriberId != null) {
-            $elementSubscriber = Craft::$app->getElements()->getElementById($subscriberId);
-
-            if ($elementSubscriber) {
-                $subscriber = $elementSubscriber;
-            }
-        }
-
-        $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');
-        $subscriber->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
-        $subscriber->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
-        $subscriber->listElements = Craft::$app->getRequest()->getBodyParam('sproutlists.subscriberLists');
-
-        $type = Craft::$app->getRequest()->getBodyParam('type');
-
-        /**
-         * @todo - Abstract to add support for saveSubscriber via other ListTypes
-         *
-         * @var ListType|MailingList $listType
-         */
-        $listType = SproutBaseLists::$app->lists->getListType($type);
-
-
-        if ($subscriber->validate(null, false)) {
-            $listType->cpBeforeSaveSubscriber($subscriber);
-        }
+        $subscriber = $listType->populateSubscriberFromPost();
 
         if (!$listType->saveSubscriber($subscriber)) {
             Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to save subscriber.'));
@@ -108,13 +86,14 @@ class SubscribersController extends Controller
     {
         $this->requirePostRequest();
 
-        $subscriberId = Craft::$app->getRequest()->getBodyParam('subscriberId');
-        $listTypeParam = Craft::$app->getRequest()->getBodyParam('type');
-        $listType = SproutBaseLists::$app->lists->getListType($listTypeParam);
+        $subscriber = new Subscriber();
+        $subscriber->listType = Craft::$app->getRequest()->getRequiredBodyParam('listType');
+        $subscriber->id = Craft::$app->getRequest()->getBodyParam('subscriberId');
 
-        $subscriber = $listType->getSubscriberById($subscriberId);
+        /** @var SubscriberInterface $listType */
+        $listType = SproutBaseLists::$app->lists->getListType($subscriber->listType);
 
-        if (!$listType->deleteSubscriberById($subscriber->id)) {
+        if (!$listType->deleteSubscriber($subscriber)) {
             Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to delete subscriber.'));
 
             Craft::$app->getUrlManager()->setRouteParams([

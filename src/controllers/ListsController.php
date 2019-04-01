@@ -2,9 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\controllers;
 
-use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\ListElement;
-use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -39,38 +37,28 @@ class ListsController extends Controller
      * Prepare variables for the List Edit Template
      *
      * @param string $pluginHandle
-     * @param null   $type
      * @param null   $listId
      * @param null   $list
      *
      * @return Response
-     * @throws \yii\base\Exception
      */
-    public function actionListEditTemplate(string $pluginHandle, $type = null, $listId = null, $list = null): Response
+    public function actionListEditTemplate(string $pluginHandle, $listId = null, $list = null): Response
     {
-        $type = $type ?? MailingList::class;
-
-        $listType = SproutBaseLists::$app->lists->getListType($type);
-
         $continueEditingUrl = null;
 
         if (!$list) {
-            if ($listId == null) {
-                $list = new ListElement();
+            if ($listId !== null) {
+                /** @var ListElement $list */
+                $list = Craft::$app->elements->getElementById($listId, ListElement::class);
+                $continueEditingUrl = 'sprout-lists/lists/edit/'.$list->id;
             } else {
-                /**
-                 * @var $listType ListType
-                 */
-                $list = $listType->getListById($listId);
-
-                $continueEditingUrl = 'sprout-lists/lists/edit/'.$listId;
+                $list = new ListElement();
             }
         }
 
         $redirectUrl = UrlHelper::cpUrl($pluginHandle.'/lists');
 
         return $this->renderTemplate('sprout-base-lists/lists/_edit', [
-            'listId' => $listId,
             'list' => $list,
             'redirectUrl' => $redirectUrl,
             'continueEditingUrl' => $continueEditingUrl
@@ -124,7 +112,7 @@ class ListsController extends Controller
         $list->type = Craft::$app->getRequest()->getRequiredBodyParam('listType');
         $list->id = Craft::$app->getRequest()->getRequiredBodyParam('listId');
 
-        $listType = SproutBaseLists::$app->lists->getListTypeById($list->type);
+        $listType = SproutBaseLists::$app->lists->getListType($list->type);
 
         if ($listType->deleteList($list)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
