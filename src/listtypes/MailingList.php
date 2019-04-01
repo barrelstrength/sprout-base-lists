@@ -56,9 +56,11 @@ class MailingList extends ListType implements SubscriberInterface
             $element = Craft::$app->getElements()->getElementById($list->id);
 
             // Update where we store the Element ID if we don't have a Subscriber Element
-            if (get_class($element) !== Subscriber::class) {
+            if (get_class($element) === ListElement::class) {
                 $list->elementId = $element->id;
                 $list->id = null;
+            } else {
+                $list->elementId = $element->id;
             }
         }
 

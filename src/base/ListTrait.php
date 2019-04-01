@@ -28,6 +28,7 @@ trait ListTrait
         $subscription = new Subscription();
         $subscription->listType = get_class($this);
         $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
+        $subscription->elementId = Craft::$app->getRequest()->getBodyParam('elementId');
         $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
         $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
         $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
@@ -57,7 +58,7 @@ trait ListTrait
             if ($list === null && $this->settings->enableAutoList) {
                 $list = new ListElement();
                 $list->type = __CLASS__;
-                $list->elementId = 1;
+                $list->elementId = $subscription->elementId;
                 $list->name = $subscription->listHandle ?? 'list:'.$subscription->listId;
                 $list->handle = $subscription->listHandle ?? 'list:'.$subscription->listId;
 

@@ -29,6 +29,11 @@ class Subscription extends Model
     public $listId;
 
     /**
+     * @var
+     */
+    public $elementId;
+
+    /**
      * @var int
      */
     public $itemId;
