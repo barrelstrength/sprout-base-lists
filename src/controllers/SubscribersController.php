@@ -29,7 +29,7 @@ class SubscribersController extends Controller
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
         $listTypes[] = $listType;
 
-        if ($id != null AND $subscriber == null) {
+        if ($id !== null AND $subscriber === null) {
             $subscription = new Subscription();
             $subscription->itemId = $id;
 

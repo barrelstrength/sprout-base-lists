@@ -198,7 +198,7 @@ trait ListTrait
     {
         $listRecord = ListElementRecord::findOne($list->id);
 
-        if ($listRecord == null) {
+        if ($listRecord === null) {
             return false;
         }
 
@@ -308,7 +308,7 @@ trait ListTrait
      */
     public function updateCount($listId = null): bool
     {
-        if ($listId == null) {
+        if ($listId === null) {
             $lists = ListElement::find()->all();
         } else {
             $list = ListElement::findOne($listId);
