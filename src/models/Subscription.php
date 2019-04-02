@@ -3,11 +3,11 @@
 namespace barrelstrength\sproutbaselists\models;
 
 use barrelstrength\sproutbaselists\base\ListType;
+use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use craft\base\Model;
 use DateTime;
 use Craft;
 use craft\validators\UniqueValidator;
-use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 
 class Subscription extends Model
 {
@@ -85,7 +85,7 @@ class Subscription extends Model
         $rules[] = [['email'], 'email'];
         $rules[] = [
             ['email'], UniqueValidator::class,
-            'targetClass' => SubscriptionRecord::class
+            'targetClass' => SubscriberRecord::class
         ];
 
         return $rules;
