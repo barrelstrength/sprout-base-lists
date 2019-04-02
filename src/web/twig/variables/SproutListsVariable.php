@@ -134,13 +134,16 @@ class SproutListsVariable
 
         $errors = [];
 
-        if (isset($routeParams['subscription'])) {
-            /**
-             * @var $subscription Subscription
-             */
-            $subscription = $routeParams['subscription'];
-            $subscriptionErrors = $subscription->getErrors();
-            $errors = $this->flattenArray($subscriptionErrors);
+        if (isset($routeParams)) {
+            $routeErrors = [];
+            foreach ($routeParams as $routeParam) {
+
+                if (is_object($routeParam) && $routeParam->hasErrors()) {
+                    $routeErrors[] = $routeParam->getErrors();
+                }
+            }
+
+            $errors = $this->flattenArray($routeErrors);
         }
 
         return $errors;
