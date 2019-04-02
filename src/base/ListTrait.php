@@ -48,6 +48,8 @@ trait ListTrait
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
 
+        if (!$subscription->validate()) return false;
+
         try {
             /** @var Element $item */
             $item = $this->getSubscriberOrItem($subscription, true);

@@ -5,6 +5,9 @@ namespace barrelstrength\sproutbaselists\models;
 use barrelstrength\sproutbaselists\base\ListType;
 use craft\base\Model;
 use DateTime;
+use Craft;
+use craft\validators\UniqueValidator;
+use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 
 class Subscription extends Model
 {
@@ -62,4 +65,29 @@ class Subscription extends Model
      * @var DateTime|null
      */
     public $dateUpdated;
+
+    /**
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function rules(): array
+    {
+        $rules = parent::rules();
+
+        $listId     = trim($this->listId);
+        $listHandle = trim($this->listHandle);
+
+        if (empty($listId) && empty($listHandle)) {
+            $this->addError('listHandle', Craft::t('sprout-base-lists',
+                'List ID or List Handle is required.'));
+        }
+
+        $rules[] = [['email'], 'email'];
+        $rules[] = [
+            ['email'], UniqueValidator::class,
+            'targetClass' => SubscriptionRecord::class
+        ];
+
+        return $rules;
+    }
 }
