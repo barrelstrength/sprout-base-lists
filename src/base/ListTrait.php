@@ -48,7 +48,9 @@ trait ListTrait
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
 
-        if (!$subscription->validate()) return false;
+        if (!$subscription->validate()) {
+            return false;
+        }
 
         try {
             /** @var Element $item */
@@ -297,6 +299,7 @@ trait ListTrait
 
     /**
      * Updates the count column in the db
+     *
      * @todo - delegate this to the queue
      *
      * @param null $listId

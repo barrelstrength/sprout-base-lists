@@ -4,7 +4,6 @@ namespace barrelstrength\sproutbaselists\services;
 
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\events\RegisterListTypesEvent;
-use barrelstrength\sproutbaselists\listtypes\MailingList;
 use craft\base\Component;
 use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
 use yii\base\Exception;

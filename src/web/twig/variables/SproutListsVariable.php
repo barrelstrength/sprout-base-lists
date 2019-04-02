@@ -2,7 +2,6 @@
 
 namespace barrelstrength\sproutbaselists\web\twig\variables;
 
-use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 
@@ -124,44 +123,4 @@ class SproutListsVariable
 //
 //        return $listType->getItemCount($list);
 //    }
-
-    /**
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        $routeParams = Craft::$app->getUrlManager()->getRouteParams();
-
-        $errors = [];
-
-        if (isset($routeParams)) {
-            $routeErrors = [];
-            foreach ($routeParams as $routeParam) {
-
-                if (is_object($routeParam) && $routeParam->hasErrors()) {
-                    $routeErrors[] = $routeParam->getErrors();
-                }
-            }
-
-            $errors = $this->flattenArray($routeErrors);
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Convert multidimensional array to single array
-     *
-     * @param array $array
-     *
-     * @return array
-     */
-    private function flattenArray(array $array): array
-    {
-        $return = [];
-        array_walk_recursive($array, function($a) use (&$return) {
-            $return[] = $a;
-        });
-        return $return;
-    }
 }
