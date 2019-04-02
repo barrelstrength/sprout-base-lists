@@ -11,6 +11,8 @@ use craft\validators\UniqueValidator;
 
 class Subscription extends Model
 {
+    const SCENARIO_SUBSCRIBER = 'subscriber';
+
     /**
      * @var int
      */
@@ -82,10 +84,7 @@ class Subscription extends Model
         }
 
         $rules[] = [['email'], 'email'];
-        $rules[] = [
-            ['email'], UniqueValidator::class,
-            'targetClass' => SubscriberRecord::class
-        ];
+        $rules[] = [['email'], 'required', 'on' => [self::SCENARIO_SUBSCRIBER]];
 
         return $rules;
     }
