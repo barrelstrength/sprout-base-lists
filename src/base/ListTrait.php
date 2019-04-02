@@ -170,6 +170,19 @@ trait ListTrait
     }
 
     /**
+     * Get all Lists for a given List Type
+     *
+     * @return \craft\base\ElementInterface[]
+     */
+    public function getLists(): array
+    {
+        return ListElement::find()
+            ->where([
+                'sproutlists_lists.type' => get_class($this)
+            ])->all();
+    }
+
+    /**
      * Saves a list.
      *
      * @param ListElement $list
