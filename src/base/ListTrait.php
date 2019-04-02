@@ -3,6 +3,8 @@
 namespace barrelstrength\sproutbaselists\base;
 
 use barrelstrength\sproutbaselists\elements\ListElement;
+use barrelstrength\sproutbaselists\elements\Subscriber;
+use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use barrelstrength\sproutbaselists\SproutBaseLists;
@@ -48,13 +50,28 @@ trait ListTrait
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
 
+        // SCENARIO SUBSCRIBER determine if we need to validate EMAIL as REQUIRED
+
         if (!$subscription->validate()) {
             return false;
         }
 
         try {
             /** @var Element $item */
-            $item = $this->getSubscriberOrItem($subscription, true);
+            $item = $this->getSubscriberOrItem($subscription);
+
+            // If our Subscriber doesn't exist, create a Subscriber Element
+            if ($item === null) {
+                $item = new Subscriber();
+                $item->userId = $subscription->itemId;
+                $item->email = $subscription->email;
+                $item->firstName = $subscription->firstName ?? null;
+                $item->lastName = $subscription->lastName ?? null;
+
+                $this->saveSubscriber($item);
+
+                $subscription->itemId = $item->id;
+            }
 
             $list = $this->getList($subscription);
 
@@ -75,15 +92,15 @@ trait ListTrait
                 throw new NotFoundHttpException(Craft::t('sprout-base-lists', 'Unable to find or create List'));
             }
 
-            $subscriptionRecord = new SubscriptionRecord();
-            $subscriptionRecord->listId = $list->id;
-            $subscriptionRecord->itemId = $item->id;
-
             if (!$item->validate() || !$list->validate()) {
                 $subscription->addErrors($item->getErrors());
                 $subscription->addErrors($list->getErrors());
                 return false;
             }
+
+            $subscriptionRecord = new SubscriptionRecord();
+            $subscriptionRecord->listId = $list->id;
+            $subscriptionRecord->itemId = $item->id;
 
             if ($subscriptionRecord->save()) {
                 $this->updateCount($subscriptionRecord->listId);

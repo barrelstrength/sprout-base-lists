@@ -74,15 +74,13 @@ class MailingList extends ListType implements SubscriberInterface
     /**
      * Get a Subscriber Element based on a subscription
      *
-     * @param Subscription $subscription
-     * @param bool         $createIfNotFound
+     * @param \yii\base\Model $subscription
      *
-     * @return Subscriber|bool|\craft\base\ElementInterface|\yii\base\Model|null
-     * @throws Exception
-     * @throws \Throwable
+     * @return Subscriber|\yii\base\Model|null
      */
-    public function getSubscriberOrItem($subscription, $createIfNotFound = false)
+    public function getSubscriberOrItem($subscription)
     {
+        /** @var Subscription $subscription */
         $subscriberId = $subscription->itemId;
 
         $query = Subscriber::find();
@@ -102,21 +100,6 @@ class MailingList extends ListType implements SubscriberInterface
 
         /** @var Subscriber $subscriber */
         $subscriber = $query->one();
-
-        // If our Subscriber doesn't exist, create a Subscriber Element
-        if ($subscriber === null && $createIfNotFound) {
-            $subscriber = new Subscriber();
-            $subscriber->userId = $subscription->itemId;
-            $subscriber->email = $subscription->email;
-            $subscriber->firstName = $subscription->firstName ?? null;
-            $subscriber->lastName = $subscription->lastName ?? null;
-
-            $subscriber = $this->saveSubscriber($subscriber);
-        }
-
-        if ($subscriber === null) {
-            return null;
-        }
 
         // Only assign profile values when we add a Subscriber if we have values
         // Don't overwrite any profile attributes with empty values
