@@ -16,6 +16,13 @@ use yii\base\Model;
 abstract class ListType extends Component
 {
     /**
+     * Set this value to true if a List Type should require an email address when processing a subscription.
+     *
+     * @var bool
+     */
+    public $requireEmailForSubscription = false;
+
+    /**
      * @var Settings $settings
      */
     public $settings;

@@ -29,6 +29,11 @@ class MailingList extends ListType implements SubscriberInterface
     use ListTrait;
 
     /**
+     * @var bool
+     */
+    public $requireEmailForSubscription = true;
+
+    /**
      * @return string
      */
     public static function displayName(): string

@@ -48,13 +48,15 @@ trait ListTrait
      */
     public function add(Subscription $subscription): bool
     {
-        $transaction = Craft::$app->getDb()->beginTransaction();
-
-        // SCENARIO SUBSCRIBER determine if we need to validate EMAIL as REQUIRED
+        if ($this->requireEmailForSubscription = true) {
+            $subscription->setScenario(Subscription::SCENARIO_SUBSCRIBER);
+        }
 
         if (!$subscription->validate()) {
             return false;
         }
+
+        $transaction = Craft::$app->getDb()->beginTransaction();
 
         try {
             /** @var Element $item */
