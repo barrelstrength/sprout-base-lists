@@ -217,11 +217,12 @@ class ListElement extends Element
 
         $rules[] = [['name', 'handle'], 'required'];
 
-        $rules[] =[
-                    ['handle'], UniqueValidator::class,
-                    'targetClass' => ListsRecord::class
-                ];
-
+        $rules[] = [
+            ['elementId', 'handle'],
+            UniqueValidator::class,
+            'targetClass' => ListsRecord::class,
+            'targetAttribute' => ['elementId', 'handle']
+        ];
 
         return $rules;
     }

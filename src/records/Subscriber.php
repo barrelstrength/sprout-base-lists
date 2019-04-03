@@ -49,14 +49,4 @@ class Subscriber extends ActiveRecord
         return $this->hasMany(ListElement::class, ['id' => 'listId'])
             ->viaTable('{{%sproutlists_subscriptions}}', ['itemId' => 'id']);
     }
-
-    /**
-     * @return array
-     */
-    public function rules(): array
-    {
-        return [
-            [['email'], 'unique']
-        ];
-    }
 }

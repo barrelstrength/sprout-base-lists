@@ -20,14 +20,4 @@ class Subscription extends ActiveRecord
     {
         return '{{%sproutlists_subscriptions}}';
     }
-
-    /**
-     * @return array
-     */
-    public function rules(): array
-    {
-        return [
-            [['listId', 'itemId'], 'unique', 'targetAttribute' => ['listId', 'itemId']]
-        ];
-    }
 }

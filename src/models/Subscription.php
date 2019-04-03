@@ -3,7 +3,7 @@
 namespace barrelstrength\sproutbaselists\models;
 
 use barrelstrength\sproutbaselists\base\ListType;
-use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
+use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use craft\base\Model;
 use DateTime;
 use Craft;
@@ -75,16 +75,25 @@ class Subscription extends Model
     {
         $rules = parent::rules();
 
-        $listId     = trim($this->listId);
-        $listHandle = trim($this->listHandle);
-
-        if (empty($listId) && empty($listHandle)) {
-            $this->addError('listHandle', Craft::t('sprout-base-lists',
-                'List ID or List Handle is required.'));
-        }
-
+        $rules[] = [
+            ['email'],
+            'required',
+            'on' => [self::SCENARIO_SUBSCRIBER]
+        ];
+        $rules[] = [
+            ['listId'],
+            'required',
+            'when' => function() {
+                return !self::SCENARIO_SUBSCRIBER;
+            }
+        ];
         $rules[] = [['email'], 'email'];
-        $rules[] = [['email'], 'required', 'on' => [self::SCENARIO_SUBSCRIBER]];
+        $rules[] = [
+            ['listId', 'itemId'],
+            UniqueValidator::class,
+            'targetClass' => SubscriptionRecord::class,
+            'targetAttribute' => ['listId', 'itemId']
+        ];
 
         return $rules;
     }

@@ -5,6 +5,7 @@ namespace barrelstrength\sproutbaselists\records;
 use craft\base\Element;
 use craft\db\ActiveRecord;
 use yii\db\ActiveQueryInterface;
+use yii\validators\UniqueValidator;
 
 /**
  * Class ListElement record.
@@ -37,15 +38,5 @@ class ListElement extends ActiveRecord
     public function getElement(): ActiveQueryInterface
     {
         return $this->hasOne(Element::class, ['id' => 'id']);
-    }
-
-    /**
-     * @return array
-     */
-    public function rules(): array
-    {
-        return [
-            [['elementId', 'handle'], 'unique', 'targetAttribute' => ['elementId', 'handle']]
-        ];
     }
 }

@@ -220,17 +220,21 @@ class Subscriber extends Element
 
     /**
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     public function rules(): array
     {
-        return [
-            [['email'], 'required'],
-            [
-                ['email'], UniqueValidator::class,
-                'targetClass' => SubscribersRecord::class
-            ],
-            [['email'], 'email']
+        $rules = parent::rules();
+
+        $rules[] = [['email'], 'required'];
+        $rules[] = [['email'], 'email'];
+        $rules[] = [
+            ['email'],
+            UniqueValidator::class,
+            'targetClass' => SubscribersRecord::class
         ];
+
+        return $rules;
     }
 
     /**
