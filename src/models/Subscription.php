@@ -3,16 +3,14 @@
 namespace barrelstrength\sproutbaselists\models;
 
 use barrelstrength\sproutbaselists\base\ListType;
+use barrelstrength\sproutbaselists\base\SubscriptionInterface;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use craft\base\Model;
 use DateTime;
-use Craft;
 use craft\validators\UniqueValidator;
 
-class Subscription extends Model
+class Subscription extends Model implements SubscriptionInterface
 {
-    const SCENARIO_SUBSCRIBER = 'subscriber';
-
     /**
      * @var int
      */
@@ -67,6 +65,14 @@ class Subscription extends Model
      * @var DateTime|null
      */
     public $dateUpdated;
+
+    /**
+     * @inheritdoc
+     */
+    public function getListType(): ListType
+    {
+        return $this->listType;
+    }
 
     /**
      * @return array

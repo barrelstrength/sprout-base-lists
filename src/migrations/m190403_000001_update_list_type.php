@@ -9,7 +9,7 @@ use craft\db\Migration;
  *
  * @package barrelstrength\sproutbaselists\migrations
  */
-class m190327_000001_update_list_type extends Migration
+class m190403_000001_update_list_type extends Migration
 {
     /**
      * @return bool

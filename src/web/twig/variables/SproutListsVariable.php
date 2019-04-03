@@ -3,7 +3,6 @@
 namespace barrelstrength\sproutbaselists\web\twig\variables;
 
 use barrelstrength\sproutbaselists\SproutBaseLists;
-use Craft;
 
 class SproutListsVariable
 {

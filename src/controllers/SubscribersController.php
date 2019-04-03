@@ -2,7 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\controllers;
 
-use barrelstrength\sproutbaselists\base\SubscriberInterface;
+use barrelstrength\sproutbaselists\base\BaseSubscriberList;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
@@ -54,7 +54,7 @@ class SubscribersController extends Controller
     {
         $this->requirePostRequest();
 
-        /** @var SubscriberInterface $listType */
+        /** @var BaseSubscriberList $listType */
         $listType = Craft::$app->getRequest()->getBodyParam('listType');
         $listType = SproutBaseLists::$app->lists->getListType($listType);
 
@@ -90,7 +90,7 @@ class SubscribersController extends Controller
         $subscriber->listType = Craft::$app->getRequest()->getRequiredBodyParam('listType');
         $subscriber->id = Craft::$app->getRequest()->getBodyParam('subscriberId');
 
-        /** @var SubscriberInterface $listType */
+        /** @var BaseSubscriberList $listType */
         $listType = SproutBaseLists::$app->lists->getListType($subscriber->listType);
 
         if (!$listType->deleteSubscriber($subscriber)) {

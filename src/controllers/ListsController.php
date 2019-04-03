@@ -3,7 +3,7 @@
 namespace barrelstrength\sproutbaselists\controllers;
 
 use barrelstrength\sproutbaselists\elements\ListElement;
-use barrelstrength\sproutbaselists\records\Subscriber;
+use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -153,6 +153,7 @@ class ListsController extends Controller
         $listType = Craft::$app->getRequest()->getBodyParam('listType');
         $listType = SproutBaseLists::$app->lists->getListType($listType);
 
+        /** @var Subscription $subscription */
         $subscription = $listType->populateSubscriptionFromPost();
 
         if (!$listType->add($subscription)) {
@@ -194,6 +195,7 @@ class ListsController extends Controller
         $listType = Craft::$app->getRequest()->getBodyParam('listType');
         $listType = SproutBaseLists::$app->lists->getListType($listType);
 
+        /** @var Subscription $subscription */
         $subscription = $listType->populateSubscriptionFromPost();
 
         if (!$listType->remove($subscription)) {

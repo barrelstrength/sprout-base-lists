@@ -3,11 +3,8 @@
 namespace barrelstrength\sproutbaselists\base;
 
 use barrelstrength\sproutbase\SproutBase;
-use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\models\Settings;
-use barrelstrength\sproutbaselists\models\Subscription;
 use craft\base\Component;
-use yii\base\Model;
 
 /**
  *
@@ -47,70 +44,70 @@ abstract class ListType extends Component
     /**
      * Prepare the Subscription model for the `add` and `remove` methods
      *
-     * @return Subscription
+     * @return SubscriptionInterface
      */
-    abstract public function populateSubscriptionFromPost(): Subscription;
+    abstract public function populateSubscriptionFromPost(): SubscriptionInterface;
 
     /**
      * Subscribe a user to a list for this List Type
      *
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      *
      * @return bool
      */
-    abstract public function add(Subscription $subscription): bool;
+    abstract public function add(SubscriptionInterface $subscription): bool;
 
     /**
      * Unsubscribe a user from a list for this List Type
      *
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      *
      * @return bool
      */
-    abstract public function remove(Subscription $subscription): bool;
+    abstract public function remove(SubscriptionInterface $subscription): bool;
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      */
-    abstract public function getList(Subscription $subscription);
+    abstract public function getList(SubscriptionInterface $subscription);
 
     /**
      * Prepare the ListElement for the `saveList` method
      *
-     * @return ListElement
+     * @return ListInterface
      */
-    abstract public function populateListFromPost(): ListElement;
+    abstract public function populateListFromPost(): ListInterface;
 
     /**
-     * @param ListElement $list
+     * @param ListInterface $list
      *
      * @return bool
      */
-    abstract public function saveList(ListElement $list): bool;
+    abstract public function saveList(ListInterface $list): bool;
 
     /**
-     * @param ListElement $list
+     * @param ListInterface $list
      *
      * @return bool
      */
-    abstract public function deleteList(ListElement $list): bool;
+    abstract public function deleteList(ListInterface $list): bool;
 
     /**
-     * @param Model $subscription
+     * @param SubscriptionInterface $subscription
      *
-     * @return Model|null
+     * @return SubscriptionInterface|null
      */
-    abstract public function getSubscriberOrItem($subscription);
+    abstract public function getSubscriberOrItem(SubscriptionInterface $subscription);
 
     /**
      * Get all subscriptions for a given list.
      *
-     * @param ListElement $list
+     * @param ListInterface $list
      *
      * @return mixed
      * @internal param $criteria
      */
-    abstract public function getSubscriptions(ListElement $list);
+    abstract public function getSubscriptions(ListInterface $list);
 
     /**
      * Prepare the Subscription model for the `isSubscribed` method.
@@ -121,23 +118,23 @@ abstract class ListType extends Component
      *
      * @param array $criteria
      *
-     * @return Subscription
+     * @return SubscriptionInterface
      */
-    abstract public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): Subscription;
+    abstract public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): SubscriptionInterface;
 
     /**
      * Check if a user is subscribed to a list
      *
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      *
      * @return bool
      */
-    abstract public function isSubscribed(Subscription $subscription): bool;
+    abstract public function isSubscribed(SubscriptionInterface $subscription): bool;
 
     /**
-     * @param ListElement $list
+     * @param ListInterface $list
      *
      * @return int
      */
-    abstract public function getCount(ListElement $list): int;
+    abstract public function getCount(ListInterface $list): int;
 }

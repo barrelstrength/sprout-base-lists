@@ -4,6 +4,7 @@ namespace barrelstrength\sproutbaselists\elements;
 
 use barrelstrength\sproutbase\SproutBase;
 use barrelstrength\sproutbaselists\base\ListType;
+use barrelstrength\sproutbaselists\base\SubscriberInterface;
 use barrelstrength\sproutbaselists\elements\actions\DeleteSubscriber;
 use barrelstrength\sproutbaselists\elements\db\SubscriberQuery;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
@@ -24,7 +25,7 @@ use yii\db\Exception;
  * @property array $listIds
  * @property array $lists
  */
-class Subscriber extends Element
+class Subscriber extends Element implements SubscriberInterface
 {
     /**
      * @var int
@@ -98,6 +99,14 @@ class Subscriber extends Element
         return UrlHelper::cpUrl(
             'sprout-lists/subscribers/edit/'.$this->id
         );
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**

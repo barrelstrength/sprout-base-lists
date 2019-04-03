@@ -2,8 +2,10 @@
 
 namespace barrelstrength\sproutbaselists\listtypes;
 
+use barrelstrength\sproutbaselists\base\ListInterface;
 use barrelstrength\sproutbaselists\base\ListTrait;
 use barrelstrength\sproutbaselists\base\ListType;
+use barrelstrength\sproutbaselists\base\SubscriptionInterface;
 use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\models\Subscription;
 use Craft;
@@ -34,7 +36,7 @@ class WishList extends ListType
      * @return ListElement
      * @throws \yii\web\BadRequestHttpException
      */
-    public function populateListFromPost(): ListElement
+    public function populateListFromPost(): ListInterface
     {
         $list = new ListElement();
         $list->type = get_class($this);
@@ -63,11 +65,11 @@ class WishList extends ListType
     }
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface|Subscription $subscription
      *
      * @return Element|null
      */
-    public function getSubscriberOrItem($subscription)
+    public function getSubscriberOrItem(SubscriptionInterface $subscription)
     {
         /**
          * See if we find:

@@ -22,9 +22,9 @@ trait ListTrait
     /**
      * Prepare the Subscription model for the `add` and `remove` methods
      *
-     * @return Subscription
+     * @return SubscriptionInterface
      */
-    public function populateSubscriptionFromPost(): Subscription
+    public function populateSubscriptionFromPost(): SubscriptionInterface
     {
         $subscription = new Subscription();
         $subscription->listType = get_class($this);
@@ -40,12 +40,12 @@ trait ListTrait
     }
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface|Subscription $subscription
      *
      * @return bool
      * @throws \Throwable
      */
-    public function add(Subscription $subscription): bool
+    public function add(SubscriptionInterface $subscription): bool
     {
         if ($this->requireEmailForSubscription = true) {
             $subscription->setScenario(Subscription::SCENARIO_SUBSCRIBER);
@@ -121,11 +121,11 @@ trait ListTrait
     }
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      *
      * @return bool
      */
-    public function remove(Subscription $subscription): bool
+    public function remove(SubscriptionInterface $subscription): bool
     {
         $list = $this->getList($subscription);
 
@@ -158,11 +158,11 @@ trait ListTrait
     // =========================================================================
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface|Subscription $subscription
      *
      * @return ListElement|null
      */
-    public function getList(Subscription $subscription)
+    public function getList(SubscriptionInterface $subscription)
     {
         $query = ListElement::find()
             ->where([
@@ -204,29 +204,30 @@ trait ListTrait
     /**
      * Saves a list.
      *
-     * @param ListElement $list
+     * @param ListInterface $list
      *
      * @return bool
      * @throws \Throwable
      * @throws \craft\errors\ElementNotFoundException
      * @throws \yii\base\Exception
      */
-    public function saveList(ListElement $list): bool
+    public function saveList(ListInterface $list): bool
     {
+        /** @var ListElement $list */
         return Craft::$app->elements->saveElement($list);
     }
 
     /**
      * Deletes a list.
      *
-     * @param ListElement $list
+     * @param ListInterface|ListElement $list
      *
      * @return bool
      * @throws \Exception
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function deleteList(ListElement $list): bool
+    public function deleteList(ListInterface $list): bool
     {
         $listRecord = ListElementRecord::findOne($list->id);
 
@@ -252,12 +253,12 @@ trait ListTrait
     }
 
     /**
-     * @param ListElement $list
+     * @param ListInterface|ListElement $list
      *
      * @return array|mixed
      * @throws \Exception
      */
-    public function getSubscriptions(ListElement $list)
+    public function getSubscriptions(ListInterface $list)
     {
         return SubscriptionRecord::find()
             ->where(['listId' => $list->id])
@@ -267,9 +268,9 @@ trait ListTrait
     /**
      * @param array $criteria
      *
-     * @return Subscription
+     * @return SubscriptionInterface
      */
-    public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): Subscription
+    public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): SubscriptionInterface
     {
         $subscription = new Subscription();
         $subscription->listType = get_class($this);
@@ -282,11 +283,11 @@ trait ListTrait
     }
 
     /**=
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      *
      * @return bool
      */
-    public function isSubscribed(Subscription $subscription): bool
+    public function isSubscribed(SubscriptionInterface $subscription): bool
     {
         $list = $this->getList($subscription);
 
@@ -317,12 +318,12 @@ trait ListTrait
     }
 
     /**
-     * @param ListElement $list
+     * @param ListInterface $list
      *
      * @return int
      * @throws \Exception
      */
-    public function getCount(ListElement $list): int
+    public function getCount(ListInterface $list): int
     {
         $items = $this->getSubscriptions($list);
 

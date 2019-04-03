@@ -2,6 +2,8 @@
 
 namespace barrelstrength\sproutbaselists\elements;
 
+use barrelstrength\sproutbaselists\base\ListInterface;
+use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\actions\DeleteList;
 use barrelstrength\sproutbaselists\elements\db\ListElementQuery;
 use barrelstrength\sproutbaselists\SproutBaseLists;
@@ -15,7 +17,10 @@ use craft\validators\HandleValidator;
 use yii\web\ErrorHandler;
 use craft\validators\UniqueValidator;
 
-class ListElement extends Element
+/**
+ * @property mixed $listType
+ */
+class ListElement extends Element implements ListInterface
 {
     /**
      * @var int
@@ -90,9 +95,9 @@ class ListElement extends Element
     }
 
     /**
-     * @return mixed
+     * @return ListType
      */
-    public function getListType()
+    public function getType(): ListType
     {
         return new $this->type();
     }

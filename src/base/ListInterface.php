@@ -7,7 +7,7 @@
 
 namespace barrelstrength\sproutbaselists\base;
 
-interface SubscriberInterface
+interface ListInterface
 {
     /**
      * @return int|null
@@ -15,7 +15,7 @@ interface SubscriberInterface
     public function getId();
 
     /**
-     * @return string|null
+     * @return ListType
      */
-    public function getEmail();
+    public function getType(): ListType;
 }

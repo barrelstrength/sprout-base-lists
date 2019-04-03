@@ -2,9 +2,11 @@
 
 namespace barrelstrength\sproutbaselists\listtypes;
 
+use barrelstrength\sproutbaselists\base\BaseSubscriberList;
+use barrelstrength\sproutbaselists\base\ListInterface;
 use barrelstrength\sproutbaselists\base\ListTrait;
-use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\base\SubscriberInterface;
+use barrelstrength\sproutbaselists\base\SubscriptionInterface;
 use barrelstrength\sproutbaselists\elements\ListElement;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
@@ -12,7 +14,6 @@ use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use Craft;
 use craft\base\Element;
-use craft\elements\User;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\StringHelper;
 use craft\helpers\Template;
@@ -24,7 +25,7 @@ use yii\base\Exception;
  * @property array  $listsWithSubscribers
  * @property string $handle
  */
-class MailingList extends ListType implements SubscriberInterface
+class MailingList extends BaseSubscriberList
 {
     use ListTrait;
 
@@ -44,10 +45,10 @@ class MailingList extends ListType implements SubscriberInterface
     /**
      * Prepare the ListElement for the `saveList` method
      *
-     * @return ListElement
+     * @return ListInterface
      * @throws \yii\web\BadRequestHttpException
      */
-    public function populateListFromPost(): ListElement
+    public function populateListFromPost(): ListInterface
     {
         $list = new ListElement();
         $list->type = get_class($this);
@@ -76,11 +77,11 @@ class MailingList extends ListType implements SubscriberInterface
     /**
      * Get a Subscriber Element based on a subscription
      *
-     * @param \yii\base\Model $subscription
+     * @param SubscriptionInterface $subscription
      *
-     * @return Subscriber|\yii\base\Model|null
+     * @return SubscriptionInterface|Subscriber|null
      */
-    public function getSubscriberOrItem($subscription)
+    public function getSubscriberOrItem(SubscriptionInterface $subscription)
     {
         /** @var Subscription $subscription */
         $subscriberId = $subscription->itemId;
@@ -117,9 +118,9 @@ class MailingList extends ListType implements SubscriberInterface
     }
 
     /**
-     * @return Subscriber
+     * @return SubscriberInterface
      */
-    public function populateSubscriberFromPost(): Subscriber
+    public function populateSubscriberFromPost(): SubscriberInterface
     {
         $subscriber = new Subscriber();
         $subscriber->id = Craft::$app->getRequest()->getBodyParam('subscriberId');
@@ -189,15 +190,16 @@ class MailingList extends ListType implements SubscriberInterface
     /**
      * Saves a subscriber
      *
-     * @param Subscriber $subscriber
+     * @param SubscriberInterface $subscriber
      *
      * @return bool
      * @throws \Throwable
      * @throws \craft\errors\ElementNotFoundException
      * @throws \yii\base\Exception
      */
-    public function saveSubscriber(Subscriber $subscriber): bool
+    public function saveSubscriber(SubscriberInterface $subscriber): bool
     {
+        /** @var Subscriber $subscriber */
         $subscriber = $this->updateSubscriberForUserSync($subscriber);
 
         if (Craft::$app->getElements()->saveElement($subscriber)) {
@@ -211,13 +213,13 @@ class MailingList extends ListType implements SubscriberInterface
     /**
      * Deletes a subscriber.
      *
-     * @param Subscriber $subscriber
+     * @param SubscriberInterface|Subscriber $subscriber
      *
      * @return bool
      * @throws ElementNotFoundException
      * @throws \Throwable
      */
-    public function deleteSubscriber(Subscriber $subscriber): bool
+    public function deleteSubscriber(SubscriberInterface $subscriber): bool
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
 
@@ -245,11 +247,11 @@ class MailingList extends ListType implements SubscriberInterface
     /**
      * If enable user sync is on look for user element and assign it to userId column
      *
-     * @param Subscriber $subscriber
+     * @param SubscriberInterface|Subscriber $subscriber
      *
-     * @return Subscriber $subscriber
+     * @return SubscriberInterface $subscriber
      */
-    public function updateSubscriberForUserSync(Subscriber $subscriber): Subscriber
+    public function updateSubscriberForUserSync(SubscriberInterface $subscriber): SubscriberInterface
     {
         if (!$this->settings->enableUserSync) {
             $subscriber->userId = null;

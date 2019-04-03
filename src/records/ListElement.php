@@ -5,7 +5,6 @@ namespace barrelstrength\sproutbaselists\records;
 use craft\base\Element;
 use craft\db\ActiveRecord;
 use yii\db\ActiveQueryInterface;
-use yii\validators\UniqueValidator;
 
 /**
  * Class ListElement record.

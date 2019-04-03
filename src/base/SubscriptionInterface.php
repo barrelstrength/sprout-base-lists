@@ -7,15 +7,12 @@
 
 namespace barrelstrength\sproutbaselists\base;
 
-interface SubscriberInterface
+interface SubscriptionInterface
 {
-    /**
-     * @return int|null
-     */
-    public function getId();
+    const SCENARIO_SUBSCRIBER = 'subscriber';
 
     /**
-     * @return string|null
+     * @return ListType
      */
-    public function getEmail();
+    public function getListType(): ListType;
 }
