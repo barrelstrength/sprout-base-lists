@@ -235,7 +235,7 @@ trait ListTrait
             return false;
         }
 
-        if ($listRecord AND $listRecord->delete()) {
+        if ($listRecord && $listRecord->delete()) {
             $subscriptions = SubscriptionRecord::find()->where([
                 'listId' => $list->id
             ]);
