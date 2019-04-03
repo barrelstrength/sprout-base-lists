@@ -11,6 +11,7 @@ use craft\elements\db\ElementQueryInterface;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
 use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
+use craft\validators\HandleValidator;
 use yii\web\ErrorHandler;
 use craft\validators\UniqueValidator;
 
@@ -228,7 +229,11 @@ class ListElement extends Element
         $rules = parent::rules();
 
         $rules[] = [['name', 'handle'], 'required'];
-
+        $rules[] = [
+            ['handle'],
+            HandleValidator::class,
+            'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title']
+        ];
         $rules[] = [
             ['elementId', 'handle'],
             UniqueValidator::class,
