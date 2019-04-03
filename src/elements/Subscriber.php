@@ -204,23 +204,18 @@ class Subscriber extends Element
     /**
      * Gets an array of SproutLists_ListModels to which this subscriber is subscribed.
      *
-     * @param bool $onlyListIds
-     *
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
-    public function getLists($onlyListIds = false): array
+    public function getLists(): array
     {
-        $listIds = (new Query())
-            ->select(['listId'])
-            ->from(['{{%sproutlists_subscriptions}}'])
-            ->where(['itemId' => $this->id])
-            ->column();
+        $subscriberRecord = SubscribersRecord::findOne($this->id);
 
-        if ($onlyListIds) {
-            return $listIds;
+        if ($subscriberRecord) {
+            return $subscriberRecord->getLists()->column();
         }
 
-        return ListElement::find()->id($listIds)->all();
+        return [];
     }
 
     /**
@@ -311,8 +306,7 @@ class Subscriber extends Element
         }
 
         // @todo - Temporary: We should support updating multiple lists at once on the front-end as well
-        if (Craft::$app->getRequest()->getIsCpRequest())
-        {
+        if (Craft::$app->getRequest()->getIsCpRequest()) {
             $itemIds = (new Query())
                 ->select('itemId')
                 ->from('{{%sproutlists_subscriptions}} as subscription')

@@ -166,7 +166,7 @@ class MailingList extends ListType implements SubscriberInterface
             $subscriber = $this->getSubscriberOrItem($subscription);
 
             if ($subscriber) {
-                $listIds = $subscriber->getLists(true);
+                $listIds = $subscriber->getLists();
             }
         }
 

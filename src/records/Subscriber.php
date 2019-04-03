@@ -4,6 +4,7 @@ namespace barrelstrength\sproutbaselists\records;
 
 use craft\base\Element;
 use craft\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use yii\db\ActiveQueryInterface;
 
 /**
@@ -35,6 +36,18 @@ class Subscriber extends ActiveRecord
     public function getElement(): ActiveQueryInterface
     {
         return $this->hasOne(Element::class, ['id' => 'id']);
+    }
+
+    /**
+     * Gets an array of SproutLists_ListModels to which this subscriber is subscribed.
+     *
+     * @return ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getLists(): ActiveQuery
+    {
+        return $this->hasMany(ListElement::class, ['id' => 'listId'])
+            ->viaTable('{{%sproutlists_subscriptions}}', ['itemId' => 'id']);
     }
 
     /**

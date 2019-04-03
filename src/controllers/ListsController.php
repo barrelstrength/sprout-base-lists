@@ -3,6 +3,7 @@
 namespace barrelstrength\sproutbaselists\controllers;
 
 use barrelstrength\sproutbaselists\elements\ListElement;
+use barrelstrength\sproutbaselists\records\Subscriber;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
