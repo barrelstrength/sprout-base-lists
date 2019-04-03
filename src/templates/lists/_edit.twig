@@ -82,7 +82,25 @@
                     <label>{{ "List Type"|t('sprout-base-lists') }}</label>
                 </div>
                 <div class="input">
-                    <h6>{{ "Recipients"|t('sprout-base-lists') }}</h6>
+                    <h6>{{ list.getListType().displayName() }}</h6>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="heading">
+                    <label>{{ "List ID"|t('sprout-base-lists') }}</label>
+                </div>
+                <div class="input">
+                    <h6>{{ list.id }}</h6>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="heading">
+                    <label>{{ "Element ID"|t('sprout-base-lists') }}</label>
+                </div>
+                <div class="input">
+                    <h6>{{ list.elementId }}</h6>
                 </div>
             </div>
 
@@ -92,18 +110,18 @@
 
             <div class="data">
                 <h5 class="heading">{{ "Date Created"|t('sprout-base-lists') }}</h5>
-                <div class="value">{{ list.dateCreated|datetime('short') }} {{ list.dateCreated|datetime('short') }}</div>
+                <div class="value">{{ list.dateCreated|datetime('short') }}</div>
             </div>
             <div class="data">
                 <h5 class="heading">{{ "Date Updated"|t('sprout-base-lists') }}</h5>
-                <div class="value">{{ list.dateUpdated|datetime('short') }} {{ list.dateUpdated|datetime('short') }}</div>
+                <div class="value">{{ list.dateUpdated|datetime('short') }}</div>
             </div>
 
         </div>
         <hr>
 
         <div class="meta">
-            <p class="light">{{ "Deleting a List will delete all Subscriptions to the List. No Subscriber will be deleted."|t('sprout-base-lists') }}</p>
+            <p class="light">{{ "Deleting a List will delete all Subscriptions to the List. No Subscribers will be deleted."|t('sprout-base-lists') }}</p>
         </div>
     {% endif %}
 
