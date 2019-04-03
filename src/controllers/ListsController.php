@@ -82,19 +82,19 @@ class ListsController extends Controller
 
         $list = $listType->populateListFromPost();
 
-        if ($listType->saveList($list)) {
-            Craft::$app->getSession()->setNotice(Craft::t('sprout-lists', 'List saved.'));
+        if (!$listType->saveList($list)) {
+            Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to save list.'));
 
-            return $this->redirectToPostedUrl();
+            Craft::$app->getUrlManager()->setRouteParams([
+                'list' => $list
+            ]);
+
+            return null;
         }
 
-        Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to save list.'));
+        Craft::$app->getSession()->setNotice(Craft::t('sprout-lists', 'List saved.'));
 
-        Craft::$app->getUrlManager()->setRouteParams([
-            'list' => $list
-        ]);
-
-        return null;
+        return $this->redirectToPostedUrl();
     }
 
     /**
@@ -115,25 +115,25 @@ class ListsController extends Controller
 
         $listType = SproutBaseLists::$app->lists->getListType($list->type);
 
-        if ($listType->deleteList($list)) {
+        if (!$listType->deleteList($list)) {
             if (Craft::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([
-                    'success' => true
+                    'success' => false
                 ]);
             }
 
-            Craft::$app->getSession()->setNotice(Craft::t('sprout-lists', 'List deleted.'));
+            Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to delete list.'));
 
             return $this->redirectToPostedUrl();
         }
 
         if (Craft::$app->getRequest()->getIsAjax()) {
             return $this->asJson([
-                'success' => false
+                'success' => true
             ]);
         }
 
-        Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to delete list.'));
+        Craft::$app->getSession()->setNotice(Craft::t('sprout-lists', 'List deleted.'));
 
         return $this->redirectToPostedUrl();
     }
