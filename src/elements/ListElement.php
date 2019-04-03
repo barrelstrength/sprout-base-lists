@@ -160,6 +160,8 @@ class ListElement extends Element
     {
         $attributes = [
             'name' => ['label' => Craft::t('sprout-lists', 'Name')],
+            'id' => ['label' => Craft::t('sprout-lists', 'List ID')],
+            'elementId' => ['label' => Craft::t('sprout-lists', 'Element ID')],
             'handle' => ['label' => Craft::t('sprout-lists', 'List Handle')],
             'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
             'count' => ['label' => Craft::t('sprout-lists', 'Count')],
@@ -167,6 +169,17 @@ class ListElement extends Element
         ];
 
         return $attributes;
+    }
+
+    public static function defaultTableAttributes(string $source): array
+    {
+        return [
+            'name',
+            'elementId',
+            'handle',
+            'view',
+            'count'
+        ];
     }
 
     /**
