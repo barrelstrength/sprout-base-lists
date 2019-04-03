@@ -125,17 +125,6 @@ class MailingList extends ListType implements SubscriberInterface
     public function populateSubscriberFromPost(): Subscriber
     {
         $subscriber = new Subscriber();
-
-        $subscriberId = Craft::$app->getRequest()->getBodyParam('subscriberId');
-
-        if ($subscriberId !== null) {
-            $element = Craft::$app->getElements()->getElementById($subscriberId);
-
-            if ($element) {
-                $subscriber = $element;
-            }
-        }
-
         $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');
         $subscriber->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
         $subscriber->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
@@ -275,9 +264,7 @@ class MailingList extends ListType implements SubscriberInterface
 
         $user = null;
 
-        if ($subscriber->userId) {
-            $user = Craft::$app->elements->getElementById($subscriber->userId, User::class);
-        } elseif ($subscriber->email) {
+        if ($subscriber->email) {
             $user = Craft::$app->getUsers()->getUserByUsernameOrEmail($subscriber->email);
         }
 
