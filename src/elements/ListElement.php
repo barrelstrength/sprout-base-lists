@@ -98,6 +98,14 @@ class ListElement extends Element
     }
 
     /**
+     * @return mixed
+     */
+    public function getListType()
+    {
+        return new $this->type();
+    }
+
+    /**
      * @return ElementQueryInterface
      */
     public static function find(): ElementQueryInterface
