@@ -55,17 +55,14 @@ class MailingList extends ListType implements SubscriberInterface
         $list->name = Craft::$app->request->getRequiredBodyParam('name');
         $list->handle = Craft::$app->request->getBodyParam('handle');
 
-        // @todo - does this work properly for new and edit scenarios?
         if ($list->id) {
             /** @var Element $element */
             $element = Craft::$app->getElements()->getElementById($list->id);
+            $list->elementId = $element->id;
 
-            // Update where we store the Element ID if we don't have a Subscriber Element
-            if (get_class($element) === ListElement::class) {
-                $list->elementId = $element->id;
+            // If the listId is not a ListElement, set listId to null to create a new ListElement
+            if (get_class($element) !== ListElement::class) {
                 $list->id = null;
-            } else {
-                $list->elementId = $element->id;
             }
         }
 
