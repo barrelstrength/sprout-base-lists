@@ -200,10 +200,6 @@ class MailingList extends ListType implements SubscriberInterface
      */
     public function saveSubscriber(Subscriber $subscriber): bool
     {
-        if (!$subscriber->validate()) {
-            return false;
-        }
-
         $subscriber = $this->updateSubscriberForUserSync($subscriber);
 
         if (Craft::$app->getElements()->saveElement($subscriber)) {
