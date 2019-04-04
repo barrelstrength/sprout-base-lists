@@ -25,6 +25,7 @@ class SubscriberQuery extends ElementQuery
 
     /**
      * @param $value
+     *
      * @return static self reference
      */
     public function email($value)
