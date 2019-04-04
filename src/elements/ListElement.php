@@ -14,6 +14,8 @@ use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
 use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
 use craft\validators\HandleValidator;
+use craft\validators\SlugValidator;
+use yii\base\InvalidConfigException;
 use yii\web\ErrorHandler;
 use craft\validators\UniqueValidator;
 
@@ -259,9 +261,9 @@ class ListElement extends Element implements ListInterface
         $rules[] = [['name', 'handle'], 'required'];
         $rules[] = [
             ['handle'],
-            HandleValidator::class,
-            'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title']
+            SlugValidator::class
         ];
+
         $rules[] = [
             ['elementId', 'handle'],
             UniqueValidator::class,
