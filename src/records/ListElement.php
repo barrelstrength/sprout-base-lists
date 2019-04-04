@@ -2,8 +2,10 @@
 
 namespace barrelstrength\sproutbaselists\records;
 
+use barrelstrength\sproutbaselists\elements\Subscriber;
 use craft\base\Element;
 use craft\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use yii\db\ActiveQueryInterface;
 
 /**

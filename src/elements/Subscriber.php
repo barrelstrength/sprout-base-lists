@@ -15,9 +15,11 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Element;
 use Craft;
 use craft\db\Query;
+use craft\elements\db\ElementQuery;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\UrlHelper;
 use craft\validators\UniqueValidator;
+use yii\db\ActiveQuery;
 use yii\db\Exception;
 
 /**
@@ -165,7 +167,7 @@ class Subscriber extends Element implements SubscriberInterface
     }
 
     /**
-     * @return ElementQueryInterface
+     * @return SubscriberQuery The newly created [[SubscriberQuery]] instance.
      */
     public static function find(): ElementQueryInterface
     {
@@ -204,18 +206,18 @@ class Subscriber extends Element implements SubscriberInterface
     /**
      * Gets an array of SproutLists_ListModels to which this subscriber is subscribed.
      *
-     * @return array
+     * @return SubscriberQuery|ActiveQuery
      * @throws \yii\base\InvalidConfigException
      */
-    public function getLists(): array
+    public function getLists(): ActiveQuery
     {
         $subscriberRecord = SubscribersRecord::findOne($this->id);
 
         if ($subscriberRecord) {
-            return $subscriberRecord->getLists()->column();
+            return $subscriberRecord->getLists();
         }
 
-        return [];
+        return new ActiveQuery(__CLASS__);
     }
 
     /**

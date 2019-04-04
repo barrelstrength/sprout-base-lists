@@ -154,7 +154,7 @@ class MailingList extends BaseSubscriberList
             $subscriber = $this->getSubscriberOrItem($subscription);
 
             if ($subscriber) {
-                $listIds = $subscriber->getLists();
+                $listIds = $subscriber->getLists()->column();
             }
         }
 
