@@ -15,7 +15,6 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Element;
 use Craft;
 use craft\db\Query;
-use craft\elements\db\ElementQuery;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\UrlHelper;
 use craft\validators\UniqueValidator;
