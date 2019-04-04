@@ -6,14 +6,17 @@ use barrelstrength\sproutbaselists\base\ListInterface;
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\actions\DeleteList;
 use barrelstrength\sproutbaselists\elements\db\ListElementQuery;
+use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Element;
 use Craft;
+use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
 use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
 use craft\validators\HandleValidator;
+use yii\db\ActiveQuery;
 use yii\web\ErrorHandler;
 use craft\validators\UniqueValidator;
 
@@ -103,7 +106,30 @@ class ListElement extends Element implements ListInterface
     }
 
     /**
-     * @return ElementQueryInterface
+     * @param $criteria
+     *
+     * @return \barrelstrength\sproutbaselists\base\SubscriptionInterface|null
+     */
+    public function hasItem($criteria)
+    {
+        $listType = $this->getType();
+        $subscription = $listType->populateSubscriptionFromCriteria($criteria);
+
+        return $listType->getSubscriberOrItem($subscription);
+    }
+
+    /**
+     * @param $criteria
+     *
+     * @return \barrelstrength\sproutbaselists\base\SubscriptionInterface|null
+     */
+    public function isSubscribed($criteria)
+    {
+        return $this->hasItem($criteria);
+    }
+
+    /**
+     * @return ListElementQuery
      */
     public static function find(): ElementQueryInterface
     {

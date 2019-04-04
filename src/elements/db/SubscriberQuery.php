@@ -4,13 +4,34 @@ namespace barrelstrength\sproutbaselists\elements\db;
 
 use craft\db\Query;
 use craft\elements\db\ElementQuery;
+use craft\helpers\Db;
 
+/**
+ * Class SubscriberQuery
+ *
+ * @package barrelstrength\sproutbaselists\elements\db
+ */
 class SubscriberQuery extends ElementQuery
 {
     /**
      * @var int
      */
     public $listId;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @param $value
+     * @return static self reference
+     */
+    public function email($value)
+    {
+        $this->email = $value;
+        return $this;
+    }
 
     /**
      * @inheritdoc
@@ -42,6 +63,10 @@ class SubscriberQuery extends ElementQuery
                 'sproutlists_subscribers.id',
                 array_unique($subscriberIds, SORT_REGULAR)
             ]);
+        }
+
+        if ($this->email) {
+            $this->subQuery->andWhere(Db::parseParam('sproutlists_subscribers.email', $this->email, '=', true));
         }
 
         return parent::beforePrepare();
