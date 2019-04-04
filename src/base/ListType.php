@@ -120,7 +120,7 @@ abstract class ListType extends Component
      *
      * @return SubscriptionInterface
      */
-    abstract public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): SubscriptionInterface;
+    abstract public function populateSubscriptionFromCriteria(array $criteria = []): SubscriptionInterface;
 
     /**
      * Check if a user is subscribed to a list

@@ -270,7 +270,7 @@ trait ListTrait
      *
      * @return SubscriptionInterface
      */
-    public function populateSubscriptionFromIsSubscribedCriteria(array $criteria = []): SubscriptionInterface
+    public function populateSubscriptionFromCriteria(array $criteria = []): SubscriptionInterface
     {
         $subscription = new Subscription();
         $subscription->listType = get_class($this);
