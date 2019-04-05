@@ -258,10 +258,14 @@ class ListElement extends Element implements ListInterface
     {
         $rules = parent::rules();
 
-        $rules[] = [['name', 'handle'], 'required'];
+        $rules[] = [['name', 'handle'], 'required',
+            'on' => [self::SCENARIO_LIST]
+           ];
+
         $rules[] = [
             ['handle'],
-            SlugValidator::class
+            SlugValidator::class,
+            'on' => [self::SCENARIO_LIST]
         ];
 
         $rules[] = [

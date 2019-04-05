@@ -86,6 +86,7 @@ class Subscription extends Model implements SubscriptionInterface
             'required',
             'on' => [self::SCENARIO_SUBSCRIBER]
         ];
+
         $rules[] = [
             ['listId'],
             'required',

@@ -77,20 +77,19 @@ trait ListTrait
             $list = $this->getList($subscription);
 
             // If our List doesn't exist, create a List Element
-            if ($list === null && $this->settings->enableAutoList) {
+            if ($list === null) {
                 $list = new ListElement();
-                $list->type = __CLASS__;
-                $list->elementId = $subscription->elementId;
-                $list->name = $subscription->listHandle ?? 'list:'.$subscription->listId;
-                $list->handle = $subscription->listHandle ?? 'list:'.$subscription->listId;
 
-                $this->saveList($list);
+                if ($this->settings->enableAutoList) {
+                    $list->type = __CLASS__;
+                    $list->elementId = $subscription->elementId;
+                    $list->name = $subscription->listHandle ?? 'list:'.$subscription->listId;
+                    $list->handle = $subscription->listHandle ?? 'list:'.$subscription->listId;
 
-                $subscription->listId = $list->id;
-            }
+                    $this->saveList($list);
 
-            if (!$list) {
-                throw new NotFoundHttpException(Craft::t('sprout-base-lists', 'Unable to find or create List'));
+                    $subscription->listId = $list->id;
+                }
             }
 
             if (!$item->validate() || !$list->validate()) {
@@ -204,7 +203,7 @@ trait ListTrait
     /**
      * Saves a list.
      *
-     * @param ListInterface $list
+     * @param ListInterface|ListElement $list
      *
      * @return bool
      * @throws \Throwable
@@ -213,6 +212,8 @@ trait ListTrait
      */
     public function saveList(ListInterface $list): bool
     {
+        $list->setScenario(ListInterface::SCENARIO_LIST);
+
         /** @var ListElement $list */
         return Craft::$app->elements->saveElement($list);
     }
