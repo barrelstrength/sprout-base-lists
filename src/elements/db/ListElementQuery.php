@@ -19,6 +19,37 @@ class ListElementQuery extends ElementQuery
     public $handle;
 
     /**
+     * @inheritdoc
+     */
+    public function __set($name, $value)
+    {
+        switch ($name) {
+            case 'type':
+                $this->type($value);
+                break;
+            case 'elementId':
+                $this->elementId($value);
+                break;
+            case 'handle':
+                $this->handle($value);
+                break;
+            default:
+                parent::__set($name, $value);
+        }
+    }
+
+    /**
+     * @param $value
+     *
+     * @return static self reference
+     */
+    public function type($value)
+    {
+        $this->type = $value;
+        return $this;
+    }
+
+    /**
      * @param $value
      *
      * @return static self reference
@@ -61,7 +92,7 @@ class ListElementQuery extends ElementQuery
         }
 
         if ($this->elementId) {
-            $this->subQuery->andWhere(Db::parseParam('sproutlists_lists.elementId', $this->elementId, '=', true));
+            $this->subQuery->andWhere(Db::parseParam('sproutlists_lists.elementId', $this->elementId));
         }
 
         if ($this->handle) {
