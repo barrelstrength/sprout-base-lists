@@ -9,7 +9,6 @@ namespace barrelstrength\sproutbaselists\base;
 
 interface ListInterface
 {
-    const SCENARIO_LIST = 'list';
     /**
      * @return int|null
      */

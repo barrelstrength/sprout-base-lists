@@ -89,6 +89,14 @@ trait ListTrait
                     $this->saveList($list);
 
                     $subscription->listId = $list->id;
+                } else {
+                    $subscription->addErrors([
+                        'listId' => [
+                            Craft::t('sprout-base-lists', 'List does not exist.'),
+                            Craft::t('sprout-base-lists', 'User not permitted to create List.')
+                        ]
+                    ]);
+                    return false;
                 }
             }
 
@@ -212,8 +220,6 @@ trait ListTrait
      */
     public function saveList(ListInterface $list): bool
     {
-        $list->setScenario(ListInterface::SCENARIO_LIST);
-
         /** @var ListElement $list */
         return Craft::$app->elements->saveElement($list);
     }
