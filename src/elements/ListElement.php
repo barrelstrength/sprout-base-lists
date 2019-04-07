@@ -212,10 +212,11 @@ class ListElement extends Element implements ListInterface
     {
         $attributes = [
             'name' => ['label' => Craft::t('sprout-lists', 'Name')],
+            'type' => ['label' => Craft::t('sprout-lists', 'List Type')],
             'id' => ['label' => Craft::t('sprout-lists', 'List ID')],
             'elementId' => ['label' => Craft::t('sprout-lists', 'Element ID')],
             'handle' => ['label' => Craft::t('sprout-lists', 'List Handle')],
-            'view' => ['label' => Craft::t('sprout-lists', 'View Subscriber')],
+            'view' => ['label' => Craft::t('sprout-lists', 'View Subscribers')],
             'count' => ['label' => Craft::t('sprout-lists', 'Count')],
             'dateCreated' => ['label' => Craft::t('sprout-lists', 'Date Created')]
         ];
@@ -227,9 +228,9 @@ class ListElement extends Element implements ListInterface
     {
         return [
             'name',
+            'type',
             'elementId',
             'handle',
-            'view',
             'count'
         ];
     }
@@ -244,17 +245,20 @@ class ListElement extends Element implements ListInterface
         $count = $this->count;
 
         switch ($attribute) {
+            case 'type':
+                /** @var ListType $type */
+                $type = new $this->type;
+                return $type::displayName();
+                break;
+
             case 'handle':
-
                 return '<code>'.$this->handle.'</code>';
-
                 break;
 
             case 'view':
-
                 if ($this->id && $count > 0) {
                     return '<a href="'.UrlHelper::cpUrl('sprout-lists/subscribers/'.$this->handle).'" class="go">'.
-                        Craft::t('sprout-lists', 'View Subscriber').'</a>';
+                        Craft::t('sprout-lists', 'View Subscribers').'</a>';
                 }
                 return '';
                 break;
