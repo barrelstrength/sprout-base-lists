@@ -6,9 +6,11 @@ use barrelstrength\sproutbaselists\base\ListInterface;
 use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\elements\actions\DeleteList;
 use barrelstrength\sproutbaselists\elements\db\ListElementQuery;
+use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\base\Element;
 use Craft;
+use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
@@ -107,22 +109,41 @@ class ListElement extends Element implements ListInterface
     /**
      * @param $criteria
      *
-     * @return \barrelstrength\sproutbaselists\base\SubscriptionInterface|null
+     * @return bool
      */
-    public function hasItem($criteria)
+    public function hasItem($criteria): bool
     {
         $listType = $this->getType();
-        $subscription = $listType->populateSubscriptionFromCriteria($criteria);
 
-        return $listType->getSubscriberOrItem($subscription);
+        // Always use the List ID of the current list
+        $criteria['listId'] = $this->id;
+
+        /** @var Subscription $subscription */
+        $subscription = $listType->populateSubscriptionFromCriteria($criteria);
+        $subscriberOrItem = $listType->getSubscriberOrItem($subscription);
+
+        if (!$subscriberOrItem) {
+            return false;
+        }
+
+        $subscriptionExists =  (new Query())
+            ->select(['id'])
+            ->from(['{{%sproutlists_subscriptions}}'])
+            ->where([
+                'listId' => $this->id,
+                'itemId' => $subscriberOrItem->getId()
+            ])
+            ->exists();
+
+        return $subscriptionExists;
     }
 
     /**
      * @param $criteria
      *
-     * @return \barrelstrength\sproutbaselists\base\SubscriptionInterface|null
+     * @return bool
      */
-    public function isSubscribed($criteria)
+    public function isSubscribed($criteria): bool
     {
         return $this->hasItem($criteria);
     }

@@ -156,16 +156,25 @@ trait ListTrait
                 'sproutlists_lists.type' => $subscription->listType
             ]);
 
-        if ($subscription->listId && $subscription->listHandle) {
+        if ($subscription->listId) {
+            $query->andWhere([
+                'sproutlists_lists.id' => $subscription->listId
+            ]);
+
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return $query->one();
+        }
+
+        if ($subscription->elementId && $subscription->listHandle) {
             $query->andWhere([
                 'and',
-                ['sproutlists_lists.id' => $subscription->listId],
+                ['sproutlists_lists.elementId' => $subscription->elementId],
                 ['sproutlists_lists.handle' => $subscription->listHandle]
             ]);
         } else {
             $query->andWhere([
                 'or',
-                ['sproutlists_lists.id' => $subscription->listId],
+                ['sproutlists_lists.elementId' => $subscription->elementId],
                 ['sproutlists_lists.handle' => $subscription->listHandle]
             ]);
         }

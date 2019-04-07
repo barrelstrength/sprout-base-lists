@@ -98,11 +98,11 @@ class MailingList extends BaseSubscriberList
         $query = Subscriber::find();
 
         if ($subscription->email) {
-            $query->where([
+            $query->andWhere([
                 'sproutlists_subscribers.email' => $subscription->email
             ]);
         } else {
-            $query->where([
+            $query->andWhere([
                 'sproutlists_subscribers.id' => $subscriberId
             ])
                 ->orWhere([
