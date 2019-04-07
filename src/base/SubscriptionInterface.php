@@ -12,6 +12,11 @@ interface SubscriptionInterface
     const SCENARIO_SUBSCRIBER = 'subscriber';
 
     /**
+     * @return int|null
+     */
+    public function getId();
+
+    /**
      * @return ListType
      */
     public function getListType(): ListType;

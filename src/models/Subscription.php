@@ -67,6 +67,14 @@ class Subscription extends Model implements SubscriptionInterface
     public $dateUpdated;
 
     /**
+     * @return int|null
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getListType(): ListType
