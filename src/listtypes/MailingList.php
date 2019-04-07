@@ -43,6 +43,25 @@ class MailingList extends BaseSubscriberList
     }
 
     /**
+     * Prepare the Subscription model for the `add` and `remove` methods
+     *
+     * @return SubscriptionInterface
+     */
+    public function populateSubscriptionFromPost(): SubscriptionInterface
+    {
+        $subscription = new Subscription();
+        $subscription->listType = get_class($this);
+        $subscription->listId = Craft::$app->getRequest()->getBodyParam('list.id');
+        $subscription->elementId = Craft::$app->getRequest()->getBodyParam('list.elementId');
+        $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('list.handle');
+        $subscription->email = Craft::$app->getRequest()->getBodyParam('subscription.email');
+        $subscription->firstName = Craft::$app->getRequest()->getBodyParam('subscription.firstName');
+        $subscription->lastName = Craft::$app->getRequest()->getBodyParam('subscription.lastName');
+
+        return $subscription;
+    }
+
+    /**
      * Prepare the ListElement for the `saveList` method
      *
      * @return ListInterface
@@ -53,19 +72,9 @@ class MailingList extends BaseSubscriberList
         $list = new ListElement();
         $list->type = get_class($this);
         $list->id = Craft::$app->getRequest()->getBodyParam('listId');
+        $list->elementId = Craft::$app->getRequest()->getBodyParam('elementId');
         $list->name = Craft::$app->request->getRequiredBodyParam('name');
         $list->handle = Craft::$app->request->getBodyParam('handle');
-
-        if ($list->id) {
-            /** @var Element $element */
-            $element = Craft::$app->getElements()->getElementById($list->id);
-            $list->elementId = $element->id;
-
-            // If the listId is not a ListElement, set listId to null to create a new ListElement
-            if (get_class($element) !== ListElement::class) {
-                $list->id = null;
-            }
-        }
 
         if ($list->handle === null) {
             $list->handle = StringHelper::toCamelCase($list->name);

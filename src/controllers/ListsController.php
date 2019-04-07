@@ -150,7 +150,7 @@ class ListsController extends Controller
     {
         $this->requirePostRequest();
 
-        $listType = Craft::$app->getRequest()->getBodyParam('listType');
+        $listType = Craft::$app->getRequest()->getBodyParam('list.type');
         $listType = SproutBaseLists::$app->lists->getListType($listType);
 
         /** @var Subscription $subscription */
@@ -192,7 +192,7 @@ class ListsController extends Controller
     {
         $this->requirePostRequest();
 
-        $listType = Craft::$app->getRequest()->getBodyParam('listType');
+        $listType = Craft::$app->getRequest()->getBodyParam('list.type');
         $listType = SproutBaseLists::$app->lists->getListType($listType);
 
         /** @var Subscription $subscription */

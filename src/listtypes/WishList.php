@@ -31,6 +31,26 @@ class WishList extends ListType
     }
 
     /**
+     * Prepare the Subscription model for the `add` and `remove` methods
+     *
+     * @return SubscriptionInterface
+     */
+    public function populateSubscriptionFromPost(): SubscriptionInterface
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $currentUserId = $currentUser->id ?? null;
+
+        $subscription = new Subscription();
+        $subscription->listType = get_class($this);
+        $subscription->listId = Craft::$app->getRequest()->getBodyParam('list.id');
+        $subscription->elementId = Craft::$app->getRequest()->getBodyParam('list.elementId', $currentUserId);
+        $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('list.handle');
+        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('subscription.itemId');
+
+        return $subscription;
+    }
+
+    /**
      * Prepare the ListElement for the `saveList` method
      *
      * @return ListElement
@@ -38,24 +58,15 @@ class WishList extends ListType
      */
     public function populateListFromPost(): ListInterface
     {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $currentUserId = $currentUser->id ?? null;
+
         $list = new ListElement();
         $list->type = get_class($this);
         $list->id = Craft::$app->getRequest()->getBodyParam('listId');
+        $list->elementId = Craft::$app->getRequest()->getBodyParam('elementId', $currentUserId);
         $list->name = Craft::$app->request->getRequiredBodyParam('name');
         $list->handle = Craft::$app->request->getBodyParam('handle');
-
-        // @todo - does this work properly for new and edit scenarios?
-        // @todo - Dynamically set USER? Craft::$app->getUser()->getIdentity()->id ?? null
-//        if ($list->id) {
-//            /** @var Element $element */
-//            $element = Craft::$app->getElements()->getElementById($list->id);
-//
-//            // Update where we store the Element ID if we don't have a Subscriber Element
-//            if (get_class($element) !== User::class || get_class($element) !== Subscriber::class) {
-//                $list->elementId = $element->id;
-//                $list->id = null;
-//            }
-//        }
 
         if ($list->handle === null) {
             $list->handle = StringHelper::toCamelCase($list->name);
@@ -71,16 +82,9 @@ class WishList extends ListType
      */
     public function getSubscriberOrItem(SubscriptionInterface $subscription)
     {
-        /**
-         * See if we find:
-         * 1. Subscriber Element with matching ID
-         * 2. A User Element with matching ID
-         * 3. Any Element with a matching ID
-         * 4.
-         */
-        if (is_numeric($subscription->listId)) {
+        if (is_numeric($subscription->itemId)) {
             /** @var Element $element */
-            $element = Craft::$app->elements->getElementById($subscription->listId);
+            $element = Craft::$app->elements->getElementById($subscription->itemId);
 
             if ($element === null) {
                 Craft::warning(Craft::t('sprout-base-lists', 'Unable to find an Element with ID: {id}', [

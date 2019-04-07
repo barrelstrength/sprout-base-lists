@@ -20,26 +20,6 @@ use yii\web\NotFoundHttpException;
 trait ListTrait
 {
     /**
-     * Prepare the Subscription model for the `add` and `remove` methods
-     *
-     * @return SubscriptionInterface
-     */
-    public function populateSubscriptionFromPost(): SubscriptionInterface
-    {
-        $subscription = new Subscription();
-        $subscription->listType = get_class($this);
-        $subscription->listId = Craft::$app->getRequest()->getBodyParam('listId');
-        $subscription->elementId = Craft::$app->getRequest()->getBodyParam('elementId');
-        $subscription->listHandle = Craft::$app->getRequest()->getBodyParam('listHandle');
-        $subscription->itemId = Craft::$app->getRequest()->getBodyParam('itemId');
-        $subscription->email = Craft::$app->getRequest()->getBodyParam('email');
-        $subscription->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
-        $subscription->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
-
-        return $subscription;
-    }
-
-    /**
      * @param SubscriptionInterface|Subscription $subscription
      *
      * @return bool
@@ -47,7 +27,7 @@ trait ListTrait
      */
     public function add(SubscriptionInterface $subscription): bool
     {
-        if ($this->requireEmailForSubscription = true) {
+        if ($this->requireEmailForSubscription === true) {
             $subscription->setScenario(Subscription::SCENARIO_SUBSCRIBER);
         }
 
