@@ -166,7 +166,7 @@ class ListsController extends Controller
             }
 
             Craft::$app->getUrlManager()->setRouteParams([
-                'subscriptions' => $subscription
+                'subscription' => $subscription
             ]);
 
             return null;
