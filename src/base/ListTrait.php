@@ -48,10 +48,10 @@ trait ListTrait
                 $item->firstName = $subscription->firstName ?? null;
                 $item->lastName = $subscription->lastName ?? null;
 
-                $this->saveSubscriber($item);
-
                 $subscription->itemId = $item->id;
             }
+
+            $this->saveSubscriber($item);
 
             $list = $this->getList($subscription);
 
