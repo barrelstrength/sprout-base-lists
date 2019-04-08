@@ -127,7 +127,10 @@ class Subscriber extends Element implements SubscriberInterface
 
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
 
-        $lists = ListElement::findAll();
+        $lists = ListElement::find()
+            ->where([
+                'sproutlists_lists.type' => MailingList::class
+            ])->all();
 
         if (!empty($lists)) {
             $sources[] = [
