@@ -15,9 +15,7 @@ use craft\elements\db\ElementQueryInterface;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
 use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
-use craft\validators\HandleValidator;
 use craft\validators\SlugValidator;
-use yii\base\InvalidConfigException;
 use yii\web\ErrorHandler;
 use craft\validators\UniqueValidator;
 
@@ -126,7 +124,7 @@ class ListElement extends Element implements ListInterface
             return false;
         }
 
-        $subscriptionExists =  (new Query())
+        $subscriptionExists = (new Query())
             ->select(['id'])
             ->from(['{{%sproutlists_subscriptions}}'])
             ->where([

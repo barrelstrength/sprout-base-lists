@@ -13,7 +13,6 @@ use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
 use Craft;
-use craft\base\Element;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\StringHelper;
 use craft\helpers\Template;

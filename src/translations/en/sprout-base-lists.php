@@ -95,5 +95,10 @@ return [
     'Create a Subscriber Lists and your lists will display below.' => 'Create a Subscriber Lists and your lists will display below.',
     'Unable to save subscription while saving subscriber.' => 'Unable to save subscription while saving subscriber.',
     'List ID or List Handle is required.' => 'List ID or List Handle is required.',
-    'Deleting a List will delete all Subscriptions to the List. No Subscribers will be deleted.' => 'Deleting a List will delete all Subscriptions to the List. No Subscribers will be deleted.'
+    'Deleting a List will delete all Subscriptions to the List. No Subscribers will be deleted.' => 'Deleting a List will delete all Subscriptions to the List. No Subscribers will be deleted.',
+    'User not permitted to create List not.' => 'User not permitted to create List not.',
+    'List does not exist.' => 'List does not exist.',
+    '{attribute} "{value}" has already been taken.' => '{attribute} "{value}" has already been taken.',
+    'Element ID' => 'Element ID',
+    'User not permitted to create List.' => 'User not permitted to create List.',
 ];
