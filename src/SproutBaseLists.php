@@ -119,7 +119,7 @@ class SproutBaseLists extends Module
 
         Event::on(Lists::class, Lists::EVENT_REGISTER_LIST_TYPES, function(RegisterListTypesEvent $event) {
             $event->listTypes[] = MailingList::class;
-            $event->listTypes[] = WishList::class;
+//            $event->listTypes[] = WishList::class;
         });
 
         // Setup Template Roots
