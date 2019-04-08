@@ -171,6 +171,7 @@ trait ListTrait
                 ['sproutlists_lists.handle' => $subscription->listHandle]
             ]);
         } else {
+            // Give the user what we can, but this result may not be unique in all cases
             $query->andWhere([
                 'or',
                 ['sproutlists_lists.elementId' => $subscription->elementId],
