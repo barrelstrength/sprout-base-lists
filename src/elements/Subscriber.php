@@ -319,7 +319,7 @@ class Subscriber extends Element implements SubscriberInterface
             $itemIds = (new Query())
                 ->select('itemId')
                 ->from('{{%sproutlists_subscriptions}} as subscription')
-                ->leftJoin('{{%sproutlists_lists}} as list', 'subscription.listId = list.id')
+                ->leftJoin('{{%sproutlists_lists}} as list', '[[subscription.listId]] = [[list.id]]')
                 ->where([
                     'list.type' => MailingList::class,
                     'subscription.itemId' => $this->id
