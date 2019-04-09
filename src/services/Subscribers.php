@@ -8,7 +8,7 @@ use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use craft\base\Component;
 use craft\elements\User;
-use craft\events\ElementEvent;
+use yii\base\Event;
 
 class Subscribers extends Component
 {
@@ -17,27 +17,27 @@ class Subscribers extends Component
      *
      * @throws \Throwable
      */
-    public function handleUpdateUserIdOnSaveEvent(ElementEvent $event)
+    public function handleUpdateUserIdOnSaveEvent(Event $event)
     {
         /** @var Settings $settings */
         $settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
 
-        if ($settings->enableUserSync && $event->element instanceof User) {
+        if ($settings->enableUserSync && $event->sender instanceof User) {
             $this->updateUserIdOnSave($event);
         }
     }
 
     /**
-     * @param ElementEvent $event
+     * @param Event $event
      *
      * @throws \Throwable
      */
-    public function handleUpdateUserIdOnDeleteEvent(ElementEvent $event)
+    public function handleUpdateUserIdOnDeleteEvent(Event $event)
     {
         /** @var Settings $settings */
         $settings = SproutBase::$app->settings->getPluginSettings('sprout-lists');
 
-        if ($settings->enableUserSync && $event->element instanceof User) {
+        if ($settings->enableUserSync && $event->sender instanceof User) {
             $this->updateUserIdOnDelete($event);
         }
     }
@@ -51,12 +51,12 @@ class Subscribers extends Component
      * @throws \Exception
      * @throws \Throwable
      */
-    public function updateUserIdOnSave(ElementEvent $event)
+    public function updateUserIdOnSave(Event $event)
     {
         /**
          * @var User $user
          */
-        $user = $event->element;
+        $user = $event->sender;
 
         /**
          * @var SubscribersRecord $subscriberRecord
@@ -112,12 +112,12 @@ class Subscribers extends Component
      * @throws \Exception
      * @throws \Throwable
      */
-    public function updateUserIdOnDelete(ElementEvent $event): bool
+    public function updateUserIdOnDelete(Event $event): bool
     {
         /**
          * @var $user User
          */
-        $user = $event->element;
+        $user = $event->sender;
 
         /**
          * @var SubscribersRecord $subscriberRecord

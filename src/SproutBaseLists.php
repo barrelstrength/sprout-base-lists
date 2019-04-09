@@ -16,8 +16,6 @@ use barrelstrength\sproutbaselists\services\App;
 use barrelstrength\sproutbaselists\services\Lists;
 use barrelstrength\sproutbaselists\web\twig\extensions\TwigExtensions;
 use barrelstrength\sproutbaselists\web\twig\variables\SproutListsVariable;
-use craft\events\ElementEvent;
-use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use \yii\base\Module;
@@ -26,6 +24,7 @@ use craft\events\RegisterTemplateRootsEvent;
 use craft\helpers\ArrayHelper;
 use craft\i18n\PhpMessageSource;
 use Craft;
+use craft\elements\User;
 
 class SproutBaseLists extends Module
 {
@@ -130,12 +129,16 @@ class SproutBaseLists extends Module
             $event->sender->set('sproutLists', SproutListsVariable::class);
         });
 
-        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {
-            SproutBaseLists::$app->subscribers->handleUpdateUserIdOnSaveEvent($event);
+        Event::on(User::class, User::EVENT_AFTER_SAVE, function(Event $event) {
+            if (Craft::$app->getPlugins()->isPluginEnabled('sprout-lists')) {
+                SproutBaseLists::$app->subscribers->handleUpdateUserIdOnSaveEvent($event);
+            }
         });
 
-        Event::on(Elements::class, Elements::EVENT_AFTER_DELETE_ELEMENT, function(ElementEvent $event) {
-            SproutBaseLists::$app->subscribers->handleUpdateUserIdOnDeleteEvent($event);
+        Event::on(User::class, User::EVENT_AFTER_DELETE, function(Event $event) {
+            if (Craft::$app->getPlugins()->isPluginEnabled('sprout-lists')) {
+                SproutBaseLists::$app->subscribers->handleUpdateUserIdOnDeleteEvent($event);
+            }
         });
 
         parent::init();
