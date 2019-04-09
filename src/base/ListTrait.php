@@ -47,11 +47,11 @@ trait ListTrait
                 $item->email = $subscription->email;
                 $item->firstName = $subscription->firstName ?? null;
                 $item->lastName = $subscription->lastName ?? null;
-
-                $subscription->itemId = $item->id;
             }
 
+            // Save or resave the subscriber. Make sure we have an ID and run User Sync.
             $this->saveSubscriber($item);
+            $subscription->itemId = $item->id;
 
             $list = $this->getList($subscription);
 
@@ -66,7 +66,6 @@ trait ListTrait
                     $list->handle = $subscription->listHandle ?? 'list:'.$subscription->listId;
 
                     $this->saveList($list);
-
                     $subscription->listId = $list->id;
                 } else {
                     $subscription->addErrors([
