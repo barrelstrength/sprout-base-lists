@@ -43,7 +43,7 @@ class ListElement extends ActiveRecord
      * @return ActiveQueryInterface
      * @throws \yii\base\InvalidConfigException
      */
-    public function getItems(): ActiveQueryInterface
+    public function getSubscribers(): ActiveQueryInterface
     {
         return $this->hasMany(Subscriber::class, ['id' => 'itemId'])
             ->viaTable('{{%sproutlists_subscriptions}}', ['listId' => 'id']);
