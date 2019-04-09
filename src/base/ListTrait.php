@@ -126,8 +126,8 @@ trait ListTrait
 
         // Delete the subscription that matches the List and Subscriber IDs
         $subscriptions = SubscriptionRecord::deleteAll([
-            'listId' => $list->id,
-            'itemId' => $item->id
+            '[[listId]]' => $list->id,
+            '[[itemId]]' => $item->id
         ]);
 
         if ($subscriptions !== null) {
@@ -236,7 +236,7 @@ trait ListTrait
             ]);
 
             if ($subscriptions != null) {
-                SubscriptionRecord::deleteAll('listId = :listId', [
+                SubscriptionRecord::deleteAll('[[listId]] = :listId', [
                     ':listId' => $list->id
                 ]);
             }

@@ -327,7 +327,7 @@ class Subscriber extends Element implements SubscriberInterface
                 ->distinct()
                 ->column();
 
-            Subscription::deleteAll(['itemId' => $itemIds]);
+            Subscription::deleteAll(['[[itemId]]' => $itemIds]);
 
             if ($this->listElements) {
                 foreach ($this->listElements as $listId) {

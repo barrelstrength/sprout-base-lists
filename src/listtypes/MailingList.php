@@ -235,10 +235,10 @@ class MailingList extends BaseSubscriberList
             Craft::$app->getElements()->deleteElementById($subscriber->id);
 
             // Clean up everything else that relates to this subscriber
-            SubscriberRecord::deleteAll('id = :subscriberId', [
+            SubscriberRecord::deleteAll('[[id]] = :subscriberId', [
                 ':subscriberId' => $subscriber->id
             ]);
-            SubscriptionRecord::deleteAll('listId = :listId', [
+            SubscriptionRecord::deleteAll('[[listId]] = :listId', [
                 ':listId' => $subscriber->id
             ]);
 
