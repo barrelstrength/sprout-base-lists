@@ -42,9 +42,12 @@ class ListsController extends Controller
      * @param null   $list
      *
      * @return Response
+     * @throws \yii\web\ForbiddenHttpException
      */
     public function actionListEditTemplate(string $pluginHandle, $listId = null, $list = null): Response
     {
+        $this->requirePermission('sproutLists-editLists');
+
         $continueEditingUrl = null;
 
         if (!$list) {
@@ -76,6 +79,7 @@ class ListsController extends Controller
     public function actionSaveList()
     {
         $this->requirePostRequest();
+        $this->requirePermission('sproutLists-editLists');
 
         $listType = Craft::$app->getRequest()->getBodyParam('listType');
         $listType = SproutBaseLists::$app->lists->getListType($listType);
@@ -108,6 +112,7 @@ class ListsController extends Controller
     public function actionDeleteList(): Response
     {
         $this->requirePostRequest();
+        $this->requirePermission('sproutLists-editLists');
 
         $list = new ListElement();
         $list->type = Craft::$app->getRequest()->getRequiredBodyParam('listType');

@@ -25,6 +25,8 @@ class SubscribersController extends Controller
      */
     public function actionEditSubscriberTemplate($id = null, $subscriber = null): Response
     {
+        $this->requirePermission('sproutLists-editSubscribers');
+
         /**  @var MailingList $listType */
         $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
         $listTypes[] = $listType;
@@ -53,6 +55,7 @@ class SubscribersController extends Controller
     public function actionSaveSubscriber()
     {
         $this->requirePostRequest();
+        $this->requirePermission('sproutLists-editSubscribers');
 
         /** @var BaseSubscriberList $listType */
         $listType = Craft::$app->getRequest()->getBodyParam('listType');
@@ -85,6 +88,7 @@ class SubscribersController extends Controller
     public function actionDeleteSubscriber(): Response
     {
         $this->requirePostRequest();
+        $this->requirePermission('sproutLists-editSubscribers');
 
         $subscriber = new Subscriber();
         $subscriber->listType = Craft::$app->getRequest()->getRequiredBodyParam('listType');
