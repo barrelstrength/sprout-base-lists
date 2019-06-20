@@ -166,6 +166,26 @@ class MailingList extends BaseSubscriberList
             }
         }
 
+        $options = self::getMailingListsAsOptions();
+
+        // Return a blank template if we have no lists
+        if (empty($options)) {
+            return '';
+        }
+
+        $html = Craft::$app->getView()->renderTemplate('sprout-base-lists/subscribers/_mailinglists', [
+            'options' => $options,
+            'values' => $listIds
+        ]);
+
+        return Template::raw($html);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMailingListsAsOptions()
+    {
         /** @var ListElement[] $lists */
         $lists = ListElement::find()->where([
             'sproutlists_lists.type' => __CLASS__
@@ -182,17 +202,7 @@ class MailingList extends BaseSubscriberList
             }
         }
 
-        // Return a blank template if we have no lists
-        if (empty($options)) {
-            return '';
-        }
-
-        $html = Craft::$app->getView()->renderTemplate('sprout-base-lists/subscribers/_mailinglists', [
-            'options' => $options,
-            'values' => $listIds
-        ]);
-
-        return Template::raw($html);
+        return $options;
     }
 
     /**
