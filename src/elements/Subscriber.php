@@ -28,6 +28,9 @@ use yii\db\Exception;
  */
 class Subscriber extends Element implements SubscriberInterface
 {
+    const LIST_ADD_STRATEGY = 'add';
+    const LIST_REMOVE_STRATEGY = 'remove';
+    const LIST_UPDATE_STRATEGY = 'update';
     /**
      * @var int
      */
@@ -67,6 +70,8 @@ class Subscriber extends Element implements SubscriberInterface
      * @var array
      */
     public $listElements;
+
+    public $listUpdateStrategy = self::LIST_ADD_STRATEGY;
 
     /**
      * @return string
@@ -314,8 +319,7 @@ class Subscriber extends Element implements SubscriberInterface
                 ->execute();
         }
 
-        // @todo - Temporary: We should support updating multiple lists at once on the front-end as well
-        if (Craft::$app->getRequest()->getIsCpRequest()) {
+        if ($this->listUpdateStrategy === self::LIST_UPDATE_STRATEGY) {
             $itemIds = (new Query())
                 ->select('itemId')
                 ->from('{{%sproutlists_subscriptions}} as subscription')

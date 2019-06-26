@@ -62,6 +62,7 @@ class SubscribersController extends Controller
         $listType = SproutBaseLists::$app->lists->getListType($listType);
 
         $subscriber = $listType->populateSubscriberFromPost();
+        $subscriber->listUpdateStrategy = Subscriber::LIST_UPDATE_STRATEGY;
 
         if (!$listType->saveSubscriber($subscriber)) {
             Craft::$app->getSession()->setError(Craft::t('sprout-lists', 'Unable to save subscriber.'));

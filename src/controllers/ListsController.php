@@ -3,6 +3,7 @@
 namespace barrelstrength\sproutbaselists\controllers;
 
 use barrelstrength\sproutbaselists\elements\ListElement;
+use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\helpers\UrlHelper;
@@ -162,6 +163,59 @@ class ListsController extends Controller
         $subscription = $listType->populateSubscriptionFromPost();
 
         if (!$listType->add($subscription)) {
+
+            if (Craft::$app->getRequest()->getIsAjax()) {
+                return $this->asJson([
+                    'success' => false,
+                    'errors' => $subscription->getErrors()
+                ]);
+            }
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'subscription' => $subscription
+            ]);
+
+            return null;
+        }
+
+        if (Craft::$app->getRequest()->getIsAjax()) {
+            return $this->asJson([
+                'success' => true
+            ]);
+        }
+
+        return $this->redirectToPostedUrl();
+    }
+
+    /**
+     * Updates subscriber lists
+     *
+     * @return Response|null
+     * @throws \yii\base\Exception
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function actionUpdate()
+    {
+        $this->requirePostRequest();
+
+        $listType = Craft::$app->getRequest()->getBodyParam('list.type');
+        $listType = SproutBaseLists::$app->lists->getListType($listType);
+
+        /** @var Subscription $subscription */
+        $subscription = $listType->populateSubscriptionFromPost();
+
+        $subscriber = Subscriber::find()->email($subscription->email)->one();
+        if ($subscriber === null){
+            $subscriber = new Subscriber();
+        }
+
+        $subscriber->email = $subscription->email;
+        $subscriber->firstName = $subscription->firstName;
+        $subscriber->lastName = $subscription->lastName;
+        $subscriber->listElements = $subscription->listId;
+        $subscriber->listUpdateStrategy = Subscriber::LIST_UPDATE_STRATEGY;
+
+        if (!$listType->saveSubscriber($subscriber)) {
 
             if (Craft::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([
