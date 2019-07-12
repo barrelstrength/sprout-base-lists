@@ -19,8 +19,8 @@ class ListsController extends Controller
      * @var array
      */
     protected $allowAnonymous = [
-        'actionAdd',
-        'actionRemove'
+        'add',
+        'remove'
     ];
 
     /**
