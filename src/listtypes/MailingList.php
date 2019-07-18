@@ -258,7 +258,7 @@ class MailingList extends BaseSubscriberList
             return true;
         } catch (\Exception $e) {
             $transaction->rollBack();
-            throw new ElementNotFoundException(Craft::t('sprout-base-lists', 'Unable to delete Subscriber.'));
+            throw new ElementNotFoundException('Unable to delete Subscriber.');
         }
     }
 

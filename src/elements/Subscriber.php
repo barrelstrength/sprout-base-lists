@@ -340,7 +340,7 @@ class Subscriber extends Element implements SubscriberInterface
                     $subscriptionRecord->itemId = $this->id;
 
                     if (!$subscriptionRecord->save(false)) {
-                        throw new Exception(Craft::t('sprout-base-lists', 'Unable to save subscription while saving subscriber.'));
+                        throw new Exception('Unable to save subscription while saving subscriber.');
                     }
                 }
             }
