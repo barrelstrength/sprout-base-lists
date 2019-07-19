@@ -7,12 +7,38 @@ use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
+use craft\errors\MissingComponentException;
 use craft\web\Controller;
 use Craft;
+use Exception;
+use Throwable;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 class SubscribersController extends Controller
 {
+    public $subscriberBaseUrl;
+
+    public function init()
+    {
+        $segmentOne = Craft::$app->getRequest()->getSegment(1);
+        $segmentTwo = Craft::$app->getRequest()->getSegment(2);
+
+        $this->subscriberBaseUrl = $segmentOne.'/'.$segmentTwo.'/';
+
+        parent::init();
+    }
+
+    /**
+     * @return Response
+     */
+    public function actionSubscribersIndexTemplate(): Response
+    {
+        return $this->renderTemplate('sprout-base-lists/subscribers/index', [
+            'subscriberBaseUrl' => $this->subscriberBaseUrl
+        ]);
+    }
+
     /**
      * Prepare variables for Subscriber Edit Template
      *
@@ -20,8 +46,8 @@ class SubscribersController extends Controller
      * @param null $subscriber
      *
      * @return Response
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Exception
+     * @throws Throwable
      */
     public function actionEditSubscriberTemplate($id = null, $subscriber = null): Response
     {
@@ -48,9 +74,9 @@ class SubscribersController extends Controller
      * Saves a subscriber
      *
      * @return Response|null
-     * @throws \craft\errors\MissingComponentException
+     * @throws MissingComponentException
      * @throws \yii\base\Exception
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
     public function actionSaveSubscriber()
     {
@@ -82,8 +108,8 @@ class SubscribersController extends Controller
      * Deletes a subscriber
      *
      * @return Response
-     * @throws \Exception
-     * @throws \yii\web\BadRequestHttpException
+     * @throws Exception
+     * @throws BadRequestHttpException
      */
     public function actionDeleteSubscriber(): Response
     {

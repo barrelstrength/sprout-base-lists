@@ -1,5 +1,7 @@
 {% extends "sprout-base-lists/_layouts/elementindex" %}
 
+{% do view.registerAssetBundle("barrelstrength\\sproutbaselists\\web\\assets\\subscribers\\SubscriberAsset") %}
+
 {% set title = "Subscribers"|t('sprout-base-lists') %}
 {% set elementType = 'barrelstrength\\sproutbaselists\\elements\\Subscriber' %}
 
@@ -16,4 +18,18 @@
     {% endjs %}
 {% endif %}
 
-{% do view.registerAssetBundle("barrelstrength\\sproutbaselists\\web\\assets\\subscribers\\SubscriberAsset") %}
+{% block initJs %}
+    // Pass segment to the ListQuery class to filter notification entries
+    var params = {
+    'subscriberBaseUrl': '{{ subscriberBaseUrl }}'
+    };
+    var criteria = Craft.defaultIndexCriteria;
+
+    criteria.subscriberBaseUrl = params.subscriberBaseUrl;
+
+    Craft.elementIndex = Craft.createElementIndex('{{ elementType|e("js") }}', $('#main'), {
+    context:        '{{ context }}',
+    storageKey:     'elementindex.{{ elementType|e("js") }}',
+    criteria:       criteria
+    });
+{% endblock %}

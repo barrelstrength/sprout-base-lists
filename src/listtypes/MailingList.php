@@ -12,11 +12,16 @@ use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
+use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\StringHelper;
 use craft\helpers\Template;
+use Throwable;
+use Twig_Error_Loader;
+use Twig_Markup;
 use yii\base\Exception;
+use yii\web\BadRequestHttpException;
 
 /**
  *
@@ -64,13 +69,19 @@ class MailingList extends BaseSubscriberList
      * Prepare the ListElement for the `saveList` method
      *
      * @return ListInterface
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
     public function populateListFromPost(): ListInterface
     {
-        $list = new ListElement();
+        $listId = Craft::$app->getRequest()->getBodyParam('listId');
+
+        if ($listId) {
+            $list = Craft::$app->elements->getElementById($listId);
+        } else {
+            $list = new ListElement();
+        }
+
         $list->type = get_class($this);
-        $list->id = Craft::$app->getRequest()->getBodyParam('listId');
         $list->elementId = Craft::$app->getRequest()->getBodyParam('elementId');
         $list->name = Craft::$app->request->getRequiredBodyParam('name');
         $list->handle = Craft::$app->request->getBodyParam('handle');
@@ -130,8 +141,14 @@ class MailingList extends BaseSubscriberList
      */
     public function populateSubscriberFromPost(): SubscriberInterface
     {
-        $subscriber = new Subscriber();
-        $subscriber->id = Craft::$app->getRequest()->getBodyParam('subscriberId');
+        $subscriberId = Craft::$app->getRequest()->getBodyParam('subscriberId');
+
+        if ($subscriberId) {
+            $subscriber = Craft::$app->elements->getElementById($subscriberId);
+        } else {
+            $subscriber = new Subscriber();
+        }
+
         $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');
         $subscriber->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
         $subscriber->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
@@ -145,10 +162,10 @@ class MailingList extends BaseSubscriberList
      *
      * @param $subscriberId
      *
-     * @return string|\Twig_Markup
+     * @return string|Twig_Markup
      * @throws Exception
-     * @throws \Throwable
-     * @throws \Twig_Error_Loader
+     * @throws Throwable
+     * @throws Twig_Error_Loader
      */
     public function getSubscriberSettingsHtml($subscriberId)
     {
@@ -201,9 +218,9 @@ class MailingList extends BaseSubscriberList
      * @param SubscriberInterface $subscriber
      *
      * @return bool
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
     public function saveSubscriber(SubscriberInterface $subscriber): bool
     {
@@ -225,7 +242,7 @@ class MailingList extends BaseSubscriberList
      *
      * @return bool
      * @throws ElementNotFoundException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function deleteSubscriber(SubscriberInterface $subscriber): bool
     {

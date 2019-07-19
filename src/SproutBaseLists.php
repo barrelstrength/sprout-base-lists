@@ -33,7 +33,7 @@ class SproutBaseLists extends Module
     /**
      * Enable use of SproutBaseLists::$app-> in place of Craft::$app->
      *
-     * @var \barrelstrength\sproutbaselists\services\App
+     * @var App
      */
     public static $app;
 

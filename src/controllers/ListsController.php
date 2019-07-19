@@ -8,6 +8,10 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use Craft;
+use Throwable;
+use yii\base\Exception;
+use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class ListsController extends Controller
@@ -22,29 +26,38 @@ class ListsController extends Controller
         'remove'
     ];
 
+    public $listBaseUrl;
+
+    public function init()
+    {
+        $segmentOne = Craft::$app->getRequest()->getSegment(1);
+        $segmentTwo = Craft::$app->getRequest()->getSegment(2);
+
+        $this->listBaseUrl = $segmentOne.'/'.$segmentTwo.'/';
+
+        parent::init();
+    }
+
     /**
-     * @param string $pluginHandle
-     *
      * @return Response
      */
-    public function actionListsIndexTemplate(string $pluginHandle): Response
+    public function actionListsIndexTemplate(): Response
     {
         return $this->renderTemplate('sprout-base-lists/lists/index', [
-            'pluginHandle' => $pluginHandle
+            'listBaseUrl' => $this->listBaseUrl
         ]);
     }
 
     /**
      * Prepare variables for the List Edit Template
      *
-     * @param string $pluginHandle
-     * @param null   $listId
-     * @param null   $list
+     * @param null $listId
+     * @param null $list
      *
      * @return Response
-     * @throws \yii\web\ForbiddenHttpException
+     * @throws ForbiddenHttpException
      */
-    public function actionListEditTemplate(string $pluginHandle, $listId = null, $list = null): Response
+    public function actionListEditTemplate($listId = null, $list = null): Response
     {
         $this->requirePermission('sproutLists-editLists');
 
@@ -54,13 +67,13 @@ class ListsController extends Controller
             if ($listId !== null) {
                 /** @var ListElement $list */
                 $list = Craft::$app->elements->getElementById($listId, ListElement::class);
-                $continueEditingUrl = 'sprout-lists/lists/edit/'.$list->id;
+                $continueEditingUrl = $this->listBaseUrl.'edit/'.$list->id;
             } else {
                 $list = new ListElement();
             }
         }
 
-        $redirectUrl = UrlHelper::cpUrl($pluginHandle.'/lists');
+        $redirectUrl = UrlHelper::cpUrl($this->listBaseUrl);
 
         return $this->renderTemplate('sprout-base-lists/lists/_edit', [
             'list' => $list,
@@ -74,7 +87,7 @@ class ListsController extends Controller
      *
      * @return null
      * @throws \Exception
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
     public function actionSaveList()
     {
@@ -106,8 +119,8 @@ class ListsController extends Controller
      *
      * @return Response
      * @throws \Exception
-     * @throws \Throwable
-     * @throws \yii\web\BadRequestHttpException
+     * @throws Throwable
+     * @throws BadRequestHttpException
      */
     public function actionDeleteList(): Response
     {
@@ -147,9 +160,9 @@ class ListsController extends Controller
      * Adds a subscriber to a list
      *
      * @return Response | null
-     * @throws \Throwable
-     * @throws \yii\base\Exception
-     * @throws \yii\web\BadRequestHttpException
+     * @throws Throwable
+     * @throws Exception
+     * @throws BadRequestHttpException
      */
     public function actionAdd()
     {
@@ -190,8 +203,8 @@ class ListsController extends Controller
      * Removes a subscriber from a list
      *
      * @return Response|null
-     * @throws \yii\base\Exception
-     * @throws \yii\web\BadRequestHttpException
+     * @throws Exception
+     * @throws BadRequestHttpException
      */
     public function actionRemove()
     {

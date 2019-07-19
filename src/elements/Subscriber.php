@@ -95,11 +95,14 @@ class Subscriber extends Element implements SubscriberInterface
     /**
      * @inheritdoc
      */
-    public function getCpEditUrl()
+    public function getCpEditUrl($subscriberBaseUrl = null)
     {
-        return UrlHelper::cpUrl(
-            'sprout-lists/subscribers/edit/'.$this->id
-        );
+        if (Craft::$app->getRequest()->getIsActionRequest()) {
+            // criteria.subscriberBaseUrl is used on the List Element index page
+            $subscriberBaseUrl = Craft::$app->request->getBodyParam('criteria.subscriberBaseUrl');
+        }
+
+        return UrlHelper::cpUrl($subscriberBaseUrl.'/edit/'.$this->id);
     }
 
     /**

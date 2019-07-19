@@ -89,11 +89,14 @@ class ListElement extends Element implements ListInterface
     /**
      * @inheritdoc
      */
-    public function getCpEditUrl()
+    public function getCpEditUrl($listBaseUrl = null)
     {
-        return UrlHelper::cpUrl(
-            'sprout-lists/lists/edit/'.$this->id
-        );
+        if (Craft::$app->getRequest()->getIsActionRequest()) {
+            // criteria.listBaseUrl is used on the List Element index page
+            $listBaseUrl = Craft::$app->request->getBodyParam('criteria.listBaseUrl');
+        }
+
+        return UrlHelper::cpUrl($listBaseUrl.'/edit/'.$this->id);
     }
 
     /**
@@ -313,7 +316,7 @@ class ListElement extends Element implements ListInterface
                 throw new ElementNotFoundException('Invalid list ID: '.$this->id);
             }
 
-            $record->elementId = $this->elementId;
+//            $record->elementId = $this->elementId;
         } else {
             $record = new ListsRecord();
             $record->id = $this->id;
