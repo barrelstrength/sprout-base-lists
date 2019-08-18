@@ -11,11 +11,15 @@ use barrelstrength\sproutbase\base\BaseSproutTrait;
 use barrelstrength\sproutbaselists\controllers\ListsController;
 use barrelstrength\sproutbaselists\controllers\SubscribersController;
 use barrelstrength\sproutbaselists\events\RegisterListTypesEvent;
+use barrelstrength\sproutbaselists\integrations\sproutreports\datasources\CustomMailingListQuery;
+use barrelstrength\sproutbaselists\integrations\sproutreports\datasources\Users;
 use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\services\App;
 use barrelstrength\sproutbaselists\services\Lists;
 use barrelstrength\sproutbaselists\web\twig\extensions\TwigExtensions;
 use barrelstrength\sproutbaselists\web\twig\variables\SproutListsVariable;
+use barrelstrength\sproutbasereports\services\DataSources;
+use craft\events\RegisterComponentTypesEvent;
 use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use \yii\base\Module;
@@ -139,6 +143,11 @@ class SproutBaseLists extends Module
             if (Craft::$app->getPlugins()->isPluginEnabled('sprout-lists')) {
                 SproutBaseLists::$app->subscribers->handleUpdateUserIdOnDeleteEvent($event);
             }
+        });
+
+        Event::on(DataSources::class, DataSources::EVENT_REGISTER_DATA_SOURCES, static function(RegisterComponentTypesEvent $event) {
+            $event->types[] = CustomMailingListQuery::class;
+            $event->types[] = Users::class;
         });
 
         parent::init();

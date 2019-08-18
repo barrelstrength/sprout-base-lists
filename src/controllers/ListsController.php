@@ -30,10 +30,12 @@ class ListsController extends Controller
 
     public function init()
     {
-        $segmentOne = Craft::$app->getRequest()->getSegment(1);
-        $segmentTwo = Craft::$app->getRequest()->getSegment(2);
+        if (!Craft::$app->getRequest()->getIsActionRequest()) {
+            $segmentOne = Craft::$app->getRequest()->getSegment(1);
+            $segmentTwo = Craft::$app->getRequest()->getSegment(2);
 
-        $this->listBaseUrl = $segmentOne.'/'.$segmentTwo.'/';
+            $this->listBaseUrl = UrlHelper::cpUrl($segmentOne.'/'.$segmentTwo).'/';
+        }
 
         parent::init();
     }

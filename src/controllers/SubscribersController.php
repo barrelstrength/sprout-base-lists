@@ -8,6 +8,7 @@ use barrelstrength\sproutbaselists\listtypes\MailingList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\errors\MissingComponentException;
+use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use Craft;
 use Exception;
@@ -24,7 +25,7 @@ class SubscribersController extends Controller
         $segmentOne = Craft::$app->getRequest()->getSegment(1);
         $segmentTwo = Craft::$app->getRequest()->getSegment(2);
 
-        $this->subscriberBaseUrl = $segmentOne.'/'.$segmentTwo.'/';
+        $this->subscriberBaseUrl = UrlHelper::cpUrl($segmentOne.'/'.$segmentTwo).'/';
 
         parent::init();
     }

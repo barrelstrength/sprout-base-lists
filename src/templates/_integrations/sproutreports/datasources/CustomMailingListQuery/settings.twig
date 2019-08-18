@@ -1,0 +1,13 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textareaField({
+    name: "settings[query]",
+    label: "Custom Query"|t('sprout-base-lists'),
+    instructions: "Build a custom database query. The query results must include a column named `email` to validate and be used as a Mailing List.",
+    class: "nicetext code",
+    rows: 5,
+    required: true,
+    first: true,
+    value: settings.query is defined ? settings.query : "",
+    errors: errors['query'] is defined ? errors['query'] : null
+}) }}
