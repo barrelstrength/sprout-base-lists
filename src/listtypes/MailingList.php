@@ -43,7 +43,7 @@ class MailingList extends BaseSubscriberList
      */
     public static function displayName(): string
     {
-        return Craft::t('sprout-lists', 'Mailing List');
+        return Craft::t('sprout-lists', 'Subscriber List');
     }
 
     /**
