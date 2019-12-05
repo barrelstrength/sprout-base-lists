@@ -123,9 +123,9 @@ class SproutBaseLists extends Module
 //            $event->listTypes[] = WishList::class;
         });
 
-        Event::on(DataSources::class, DataSources::EVENT_REGISTER_DATA_SOURCES, static function(RegisterComponentTypesEvent $event) {
-            $event->types[] = SubscriberListDataSource::class;
-        });
+//        Event::on(DataSources::class, DataSources::EVENT_REGISTER_DATA_SOURCES, static function(RegisterComponentTypesEvent $event) {
+//            $event->types[] = SubscriberListDataSource::class;
+//        });
 
         // Setup Template Roots
         Event::on(View::class, View::EVENT_REGISTER_CP_TEMPLATE_ROOTS, function(RegisterTemplateRootsEvent $e) {
