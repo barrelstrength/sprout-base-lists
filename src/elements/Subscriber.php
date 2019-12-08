@@ -7,7 +7,7 @@ use barrelstrength\sproutbaselists\base\ListType;
 use barrelstrength\sproutbaselists\base\SubscriberInterface;
 use barrelstrength\sproutbaselists\elements\actions\DeleteSubscriber;
 use barrelstrength\sproutbaselists\elements\db\SubscriberQuery;
-use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\listtypes\SubscriberList;
 use barrelstrength\sproutbaselists\models\Settings;
 use barrelstrength\sproutbaselists\records\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
@@ -130,12 +130,12 @@ class Subscriber extends Element implements SubscriberInterface
             ]
         ];
 
-        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
+        $listType = SproutBaseLists::$app->lists->getListType(SubscriberList::class);
 
         /** @var ListElement[] $lists */
         $lists = ListElement::find()
             ->where([
-                'sproutlists_lists.type' => MailingList::class
+                'sproutlists_lists.type' => SubscriberList::class
             ])->all();
 
         if (!empty($lists)) {
@@ -326,7 +326,7 @@ class Subscriber extends Element implements SubscriberInterface
                 ->from('{{%sproutlists_subscriptions}} as subscription')
                 ->leftJoin('{{%sproutlists_lists}} as list', '[[subscription.listId]] = [[list.id]]')
                 ->where([
-                    'list.type' => MailingList::class,
+                    'list.type' => SubscriberList::class,
                     'subscription.itemId' => $this->id
                 ])
                 ->distinct()

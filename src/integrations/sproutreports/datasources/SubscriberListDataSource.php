@@ -2,7 +2,7 @@
 
 namespace barrelstrength\sproutbaselists\integrations\sproutreports\datasources;
 
-use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\listtypes\SubscriberList;
 use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbasereports\elements\Report;
@@ -100,7 +100,7 @@ class SubscriberListDataSource extends DataSource
             ->from('{{%sproutlists_lists}} lists')
             ->leftJoin('{{%elements}} elements', '[[elements.id]] = [[lists.id]]')
             ->where([
-                'lists.type' => MailingList::class,
+                'lists.type' => SubscriberList::class,
                 'elements.dateDeleted' => null
             ])
             ->all();

@@ -4,7 +4,7 @@ namespace barrelstrength\sproutbaselists\controllers;
 
 use barrelstrength\sproutbaselists\base\BaseSubscriberList;
 use barrelstrength\sproutbaselists\elements\Subscriber;
-use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\listtypes\SubscriberList;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\SproutBaseLists;
 use craft\errors\MissingComponentException;
@@ -54,8 +54,8 @@ class SubscribersController extends Controller
     {
         $this->requirePermission('sproutLists-editSubscribers');
 
-        /**  @var MailingList $listType */
-        $listType = SproutBaseLists::$app->lists->getListType(MailingList::class);
+        /**  @var SubscriberList $listType */
+        $listType = SproutBaseLists::$app->lists->getListType(SubscriberList::class);
         $listTypes[] = $listType;
 
         if ($id !== null && $subscriber === null) {

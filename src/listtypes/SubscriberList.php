@@ -27,7 +27,7 @@ use yii\web\BadRequestHttpException;
  * @property array  $listsWithSubscribers
  * @property string $handle
  */
-class MailingList extends BaseSubscriberList
+class SubscriberList extends BaseSubscriberList
 {
     use ListTrait;
 
@@ -150,7 +150,7 @@ class MailingList extends BaseSubscriberList
         $subscriber->email = Craft::$app->getRequest()->getBodyParam('email');
         $subscriber->firstName = Craft::$app->getRequest()->getBodyParam('firstName');
         $subscriber->lastName = Craft::$app->getRequest()->getBodyParam('lastName');
-        $subscriber->listElements = Craft::$app->getRequest()->getBodyParam('mailingList.listElements');
+        $subscriber->listElements = Craft::$app->getRequest()->getBodyParam('subscriberList.listElements');
 
         return $subscriber;
     }
@@ -201,7 +201,7 @@ class MailingList extends BaseSubscriberList
             return '';
         }
 
-        $html = Craft::$app->getView()->renderTemplate('sprout-base-lists/subscribers/_mailinglists', [
+        $html = Craft::$app->getView()->renderTemplate('sprout-base-lists/subscribers/_subscriberlists', [
             'options' => $options,
             'values' => $listIds
         ]);
