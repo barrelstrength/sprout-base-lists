@@ -4,19 +4,20 @@ namespace barrelstrength\sproutbaselists\records;
 
 use craft\base\Element;
 use craft\db\ActiveRecord;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveQueryInterface;
 
 /**
  * Class Subscriber record.
  *
- * @property int                          $id
- * @property int                          $userId
- * @property string                       $email
- * @property string                       $firstName
- * @property string                       $lastName
- * @property \yii\db\ActiveQueryInterface $element
- * @property \yii\db\ActiveQueryInterface $lists
+ * @property int                  $id
+ * @property int                  $userId
+ * @property string               $email
+ * @property string               $firstName
+ * @property string               $lastName
+ * @property ActiveQueryInterface $element
+ * @property ActiveQueryInterface $lists
  */
 class Subscriber extends ActiveRecord
 {
@@ -42,7 +43,7 @@ class Subscriber extends ActiveRecord
      * Gets an array of SproutLists_ListModels to which this subscriber is subscribed.
      *
      * @return ActiveQuery
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function getLists(): ActiveQuery
     {

@@ -8,10 +8,6 @@
 namespace barrelstrength\sproutbasereports\elements\db;
 
 
-use craft\elements\db\ElementQuery;
-use craft\helpers\Db;
-use Craft;
-
 class SegmentQuery extends ReportQuery
 {
 

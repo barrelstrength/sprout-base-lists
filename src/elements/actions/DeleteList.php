@@ -7,6 +7,8 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
+use Exception;
+use Throwable;
 
 /**
  * Class DeleteList
@@ -29,8 +31,8 @@ class DeleteList extends Delete
      * @param ElementQueryInterface $query
      *
      * @return bool
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Exception
+     * @throws Throwable
      */
     public function performAction(ElementQueryInterface $query): bool
     {

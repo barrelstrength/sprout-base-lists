@@ -17,11 +17,11 @@ abstract class BaseSubscriberList extends ListType
     abstract public function populateSubscriberFromPost(): SubscriberInterface;
 
     /**
-     * @todo - review if this works in the abstract sense
-     *
      * @param $subscriberId
      *
      * @return mixed
+     * @todo - review if this works in the abstract sense
+     *
      */
     abstract public function getSubscriberSettingsHtml($subscriberId);
 

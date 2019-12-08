@@ -113,12 +113,12 @@ abstract class ListType extends Component
      * Prepare the Subscription model for the `isSubscribed` method.
      * The Subscription info is passed as `params` to the isSubscribed method.
      *
-     * @example
-     * {% if craft.sproutLists.isSubscribed(params) %} ... {% endif %}
-     *
      * @param array $criteria
      *
      * @return SubscriptionInterface
+     * @example
+     * {% if craft.sproutLists.isSubscribed(params) %} ... {% endif %}
+     *
      */
     abstract public function populateSubscriptionFromCriteria(array $criteria = []): SubscriptionInterface;
 

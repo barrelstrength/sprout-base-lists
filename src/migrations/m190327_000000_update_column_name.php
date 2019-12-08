@@ -3,6 +3,7 @@
 namespace barrelstrength\sproutbaselists\migrations;
 
 use craft\db\Migration;
+use yii\base\NotSupportedException;
 
 /**
  * Class m190327_000000_update_subscription_column_name
@@ -13,7 +14,7 @@ class m190327_000000_update_column_name extends Migration
 {
     /**
      * @return bool
-     * @throws \yii\base\NotSupportedException
+     * @throws NotSupportedException
      */
     public function safeUp(): bool
     {

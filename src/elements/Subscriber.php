@@ -17,7 +17,9 @@ use Craft;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\UrlHelper;
+use craft\models\FieldLayout;
 use craft\validators\UniqueValidator;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
 
@@ -181,7 +183,7 @@ class Subscriber extends Element implements SubscriberInterface
     }
 
     /**
-     * @return \craft\models\FieldLayout|null
+     * @return FieldLayout|null
      */
     public function getFieldLayout()
     {
@@ -213,7 +215,7 @@ class Subscriber extends Element implements SubscriberInterface
      * Gets an array of SproutLists_ListModels to which this subscriber is subscribed.
      *
      * @return SubscriberQuery|ActiveQuery
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function getLists(): ActiveQuery
     {
@@ -228,7 +230,7 @@ class Subscriber extends Element implements SubscriberInterface
 
     /**
      * @return array
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function rules(): array
     {

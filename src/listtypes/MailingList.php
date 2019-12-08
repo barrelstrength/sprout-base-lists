@@ -12,14 +12,12 @@ use barrelstrength\sproutbaselists\elements\Subscriber;
 use barrelstrength\sproutbaselists\models\Subscription;
 use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbaselists\records\Subscription as SubscriptionRecord;
-use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\StringHelper;
 use craft\helpers\Template;
 use Throwable;
-use Twig_Error_Loader;
-use Twig_Markup;
+use Twig\Markup;
 use yii\base\Exception;
 use yii\web\BadRequestHttpException;
 
@@ -162,10 +160,9 @@ class MailingList extends BaseSubscriberList
      *
      * @param $subscriberId
      *
-     * @return string|Twig_Markup
+     * @return string|Markup
      * @throws Exception
      * @throws Throwable
-     * @throws Twig_Error_Loader
      */
     public function getSubscriberSettingsHtml($subscriberId)
     {

@@ -8,6 +8,7 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
+use Throwable;
 
 /**
  * Class DeleteSubscriber
@@ -33,7 +34,7 @@ class DeleteSubscriber extends Delete
      * @param ElementQueryInterface $query
      *
      * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function performAction(ElementQueryInterface $query): bool
     {

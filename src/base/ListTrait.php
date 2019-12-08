@@ -10,6 +10,10 @@ use barrelstrength\sproutbaselists\SproutBaseLists;
 use Craft;
 use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
 use craft\base\Element;
+use craft\errors\ElementNotFoundException;
+use Exception;
+use Throwable;
+use yii\db\StaleObjectException;
 
 /**
  * Trait ListTrait
@@ -22,7 +26,7 @@ trait ListTrait
      * @param SubscriptionInterface|Subscription $subscription
      *
      * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function add(SubscriptionInterface $subscription): bool
     {
@@ -99,7 +103,7 @@ trait ListTrait
 
             $transaction->commit();
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $transaction->rollBack();
             throw $e;
         }
@@ -202,8 +206,8 @@ trait ListTrait
      * @param ListInterface|ListElement $list
      *
      * @return bool
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
+     * @throws Throwable
+     * @throws ElementNotFoundException
      * @throws \yii\base\Exception
      */
     public function saveList(ListInterface $list): bool
@@ -218,9 +222,9 @@ trait ListTrait
      * @param ListInterface|ListElement $list
      *
      * @return bool
-     * @throws \Exception
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @throws Exception
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function deleteList(ListInterface $list): bool
     {
@@ -251,7 +255,7 @@ trait ListTrait
      * @param ListInterface|ListElement $list
      *
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getSubscriptions(ListInterface $list)
     {
@@ -316,7 +320,7 @@ trait ListTrait
      * @param ListInterface $list
      *
      * @return int
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCount(ListInterface $list): int
     {
@@ -328,11 +332,11 @@ trait ListTrait
     /**
      * Updates the count column in the db
      *
-     * @todo - delegate this to the queue
-     *
      * @param null $listId
      *
      * @return bool
+     * @todo - delegate this to the queue
+     *
      */
     public function updateCount($listId = null): bool
     {

@@ -4,20 +4,21 @@ namespace barrelstrength\sproutbaselists\records;
 
 use craft\base\Element;
 use craft\db\ActiveRecord;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQueryInterface;
 
 /**
  * Class ListElement record.
  *
- * @property int                          $id
- * @property int                          $elementId
- * @property string                       $type
- * @property string                       $name
- * @property string                       $handle
- * @property \yii\db\ActiveQueryInterface $element
- * @property \yii\db\ActiveQueryInterface $subscribers
- * @property \yii\db\ActiveQueryInterface $listsWithSubscribers
- * @property int                          $count
+ * @property int                  $id
+ * @property int                  $elementId
+ * @property string               $type
+ * @property string               $name
+ * @property string               $handle
+ * @property ActiveQueryInterface $element
+ * @property ActiveQueryInterface $subscribers
+ * @property ActiveQueryInterface $listsWithSubscribers
+ * @property int                  $count
  */
 class ListElement extends ActiveRecord
 {
@@ -41,7 +42,7 @@ class ListElement extends ActiveRecord
 
     /**
      * @return ActiveQueryInterface
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function getSubscribers(): ActiveQueryInterface
     {

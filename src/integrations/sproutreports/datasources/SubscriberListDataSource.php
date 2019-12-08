@@ -1,19 +1,14 @@
 <?php
 
-namespace barrelstrength\sproutforms\integrations\sproutreports\datasources;
+namespace barrelstrength\sproutbaselists\integrations\sproutreports\datasources;
 
-use barrelstrength\sproutbasereports\SproutBaseReports;
-use barrelstrength\sproutforms\elements\Form;
-use barrelstrength\sproutforms\SproutForms;
+use barrelstrength\sproutbaselists\listtypes\MailingList;
+use barrelstrength\sproutbaselists\records\ListElement as ListElementRecord;
+use barrelstrength\sproutbaselists\records\Subscriber as SubscriberRecord;
 use barrelstrength\sproutbasereports\elements\Report;
 use Craft;
 use barrelstrength\sproutbasereports\base\DataSource;
 use craft\db\Query;
-use craft\fields\data\MultiOptionsFieldData;
-use craft\helpers\DateTimeHelper;
-use barrelstrength\sproutforms\elements\Entry;
-use craft\elements\db\ElementQueryInterface;
-use DateTime;
 use Exception;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -23,6 +18,8 @@ use Twig\Error\SyntaxError;
  * Class SubscriberListDataSource
  *
  * @package barrelstrength\sproutforms\integrations\sproutreports\datasources
+ *
+ * @property string $viewContextLabel
  */
 class SubscriberListDataSource extends DataSource
 {
@@ -31,7 +28,7 @@ class SubscriberListDataSource extends DataSource
      */
     public static function displayName(): string
     {
-        return Craft::t('sprout-base-lists', 'Subscriber List (Sprout)');
+        return Craft::t('sprout-base-lists', 'Subscriber List (Sprout Lists)');
     }
 
     /**
@@ -39,7 +36,7 @@ class SubscriberListDataSource extends DataSource
      */
     public function getDescription(): string
     {
-        return Craft::t('sprout-base-lists', 'Create a Mailing List with your Subscribers');
+        return Craft::t('sprout-base-lists', 'Create a Subscriber List with your Subscribers');
     }
 
     /**
@@ -55,7 +52,7 @@ class SubscriberListDataSource extends DataSource
      */
     public function getViewContextLabel(): string
     {
-        return 'Mailing List';
+        return 'Subscriber List';
     }
 
     /**
@@ -65,8 +62,24 @@ class SubscriberListDataSource extends DataSource
      */
     public function getResults(Report $report, array $settings = []): array
     {
+        $reportSettings = $report->getSettings();
 
-        return [];
+        /** @var ListElementRecord $listRecord */
+        $listRecord = ListElementRecord::find()
+            ->where([
+                'id' => $reportSettings['subscriberListId']
+            ])
+            ->one();
+
+        /** @var SubscriberRecord $subscriberRecords */
+        $subscriberRecords = $listRecord->getSubscribers()->all();
+
+        $subscribers = [];
+        foreach ($subscriberRecords as $subscriberRecord) {
+            $subscribers[] = $subscriberRecord->getAttributes();
+        }
+
+        return $subscribers;
     }
 
     /**
@@ -79,51 +92,22 @@ class SubscriberListDataSource extends DataSource
      */
     public function getSettingsHtml(array $settings = [])
     {
+        $subscriberListOptions = (new Query())
+            ->select([
+                'lists.name AS label',
+                'lists.id AS value'
+            ])
+            ->from('{{%sproutlists_lists}} lists')
+            ->leftJoin('{{%elements}} elements', '[[elements.id]] = [[lists.id]]')
+            ->where([
+                'lists.type' => MailingList::class,
+                'elements.dateDeleted' => null
+            ])
+            ->all();
 
-        return 'Select which Subscriber List you want to create a mailing list from';
-//        /** @var Form[] $forms */
-//        $forms = Form::find()->limit(null)->orderBy('name')->all();
-//
-//        if (empty($settings)) {
-//            $settings = (array)$this->report->getSettings();
-//        }
-//
-//        $formOptions = [];
-//
-//        foreach ($forms as $form) {
-//            $formOptions[] = [
-//                'label' => $form->name,
-//                'value' => $form->id
-//            ];
-//        }
-//
-//        // @todo Determine sensible default start and end date based on Order data
-//        $defaultStartDate = null;
-//        $defaultEndDate = null;
-//
-//        if (count($settings)) {
-//            if (isset($settings['startDate'])) {
-//                $startDateValue = (array)$settings['startDate'];
-//
-//                $settings['startDate'] = DateTimeHelper::toDateTime($startDateValue);
-//            }
-//
-//            if (isset($settings['endDate'])) {
-//                $endDateValue = (array)$settings['endDate'];
-//
-//                $settings['endDate'] = DateTimeHelper::toDateTime($endDateValue);
-//            }
-//        }
-//
-//        $dateRanges = SproutBaseReports::$app->reports->getDateRanges(false);
-//
-//        return Craft::$app->getView()->renderTemplate('sprout-forms/_integrations/sproutreports/datasources/EntriesDataSource/settings', [
-//            'formOptions' => $formOptions,
-//            'defaultStartDate' => new DateTime($defaultStartDate),
-//            'defaultEndDate' => new DateTime($defaultEndDate),
-//            'dateRanges' => $dateRanges,
-//            'options' => $settings
-//        ]);
+        return Craft::$app->getView()->renderTemplate('sprout-base-lists/_integrations/sproutreports/datasources/SubscriberList/settings', [
+            'subscriberListOptions' => $subscriberListOptions
+        ]);
     }
 
 //    /**

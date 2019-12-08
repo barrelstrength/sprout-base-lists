@@ -15,7 +15,10 @@ use craft\elements\db\ElementQueryInterface;
 use craft\errors\ElementNotFoundException;
 use craft\helpers\UrlHelper;
 use barrelstrength\sproutbaselists\records\ListElement as ListsRecord;
+use craft\models\FieldLayout;
 use craft\validators\SlugValidator;
+use Exception;
+use yii\base\InvalidConfigException;
 use yii\web\ErrorHandler;
 use craft\validators\UniqueValidator;
 
@@ -63,7 +66,7 @@ class ListElement extends Element implements ListInterface
     {
         try {
             return (string)$this->name;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             ErrorHandler::convertExceptionToError($e);
         }
 
@@ -269,7 +272,7 @@ class ListElement extends Element implements ListInterface
     }
 
     /**
-     * @return \craft\models\FieldLayout|null
+     * @return FieldLayout|null
      */
     public function getFieldLayout()
     {
@@ -278,7 +281,7 @@ class ListElement extends Element implements ListInterface
 
     /**
      * @return array
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function rules(): array
     {
@@ -304,7 +307,7 @@ class ListElement extends Element implements ListInterface
     /**
      * @param bool $isNew
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function afterSave(bool $isNew)
     {
@@ -315,7 +318,6 @@ class ListElement extends Element implements ListInterface
             if (!$record) {
                 throw new ElementNotFoundException('Invalid list ID: '.$this->id);
             }
-
 //            $record->elementId = $this->elementId;
         } else {
             $record = new ListsRecord();

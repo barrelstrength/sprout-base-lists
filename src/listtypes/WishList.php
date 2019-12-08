@@ -11,6 +11,7 @@ use barrelstrength\sproutbaselists\models\Subscription;
 use Craft;
 use craft\base\Element;
 use craft\helpers\StringHelper;
+use yii\web\BadRequestHttpException;
 
 /**
  *
@@ -54,7 +55,7 @@ class WishList extends ListType
      * Prepare the ListElement for the `saveList` method
      *
      * @return ListElement
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
     public function populateListFromPost(): ListInterface
     {

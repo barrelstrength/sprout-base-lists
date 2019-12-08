@@ -98,7 +98,7 @@ class Subscription extends Model implements SubscriptionInterface
         $rules[] = [
             ['listId'],
             'required',
-            'when' => function() {
+            'when' => static function() {
                 return !self::SCENARIO_SUBSCRIBER;
             }
         ];

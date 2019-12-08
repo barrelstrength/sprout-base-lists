@@ -45,7 +45,7 @@ class ListElementQuery extends ElementQuery
      *
      * @return static self reference
      */
-    public function type($value)
+    public function type($value): ListElementQuery
     {
         $this->type = $value;
         return $this;
@@ -56,7 +56,7 @@ class ListElementQuery extends ElementQuery
      *
      * @return static self reference
      */
-    public function elementId($value)
+    public function elementId($value): ListElementQuery
     {
         $this->elementId = $value;
         return $this;
@@ -67,7 +67,7 @@ class ListElementQuery extends ElementQuery
      *
      * @return static self reference
      */
-    public function handle($value)
+    public function handle($value): ListElementQuery
     {
         $this->handle = $value;
         return $this;

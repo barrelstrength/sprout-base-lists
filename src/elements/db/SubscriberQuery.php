@@ -30,7 +30,7 @@ class SubscriberQuery extends ElementQuery
      *
      * @return static self reference
      */
-    public function email($value)
+    public function email($value): SubscriberQuery
     {
         $this->email = $value;
         return $this;

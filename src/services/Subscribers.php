@@ -8,14 +8,16 @@ use barrelstrength\sproutbaselists\records\Subscriber as SubscribersRecord;
 use barrelstrength\sproutbaselists\elements\Subscriber;
 use craft\base\Component;
 use craft\elements\User;
+use Exception;
+use Throwable;
 use yii\base\Event;
 
 class Subscribers extends Component
 {
     /**
-     * @param ElementEvent $event
+     * @param Event $event
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handleUpdateUserIdOnSaveEvent(Event $event)
     {
@@ -30,7 +32,7 @@ class Subscribers extends Component
     /**
      * @param Event $event
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handleUpdateUserIdOnDeleteEvent(Event $event)
     {
@@ -45,11 +47,10 @@ class Subscribers extends Component
     /**
      * Sync SproutLists subscriber to craft_users if same email is found on save.
      *
-     * @param ElementEvent $event
+     * @param Event $event
      *
      * @return Subscriber|bool
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function updateUserIdOnSave(Event $event)
     {
@@ -93,7 +94,7 @@ class Subscribers extends Component
                 $subscriberRecord->update(false);
 
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw $e;
             }
         }
@@ -106,11 +107,10 @@ class Subscribers extends Component
      * Deleting a Craft User does not delete the matching Subscriber. It simply removes
      * the relationship to any Craft User ID from the Subscriber table.
      *
-     * @param ElementEvent $event
+     * @param Event $event
      *
      * @return bool
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Exception
      */
     public function updateUserIdOnDelete(Event $event): bool
     {
@@ -134,7 +134,7 @@ class Subscribers extends Component
                 $subscriberRecord->save();
 
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw $e;
             }
         }

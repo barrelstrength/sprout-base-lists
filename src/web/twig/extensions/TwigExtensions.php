@@ -4,20 +4,20 @@ namespace barrelstrength\sproutbaselists\web\twig\extensions;
 
 
 use craft\helpers\StringHelper;
-use \Twig_Extension;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
-
-class TwigExtensions extends Twig_Extension
+class TwigExtensions extends AbstractExtension
 {
     /**
      * Makes the filters available to the template context
      *
-     * @return array|\Twig_Filter[]
+     * @return array|TwigFilter[]
      */
     public function getFilters(): array
     {
         return [
-            new \Twig_SimpleFilter('subscriberUserIds', [$this, 'subscriberUserIds'])
+            new TwigFilter('subscriberUserIds', [$this, 'subscriberUserIds'])
         ];
     }
 
