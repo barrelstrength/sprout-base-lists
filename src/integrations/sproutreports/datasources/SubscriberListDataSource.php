@@ -56,6 +56,22 @@ class SubscriberListDataSource extends DataSource
     }
 
     /**
+     * @return bool
+     */
+    public function isEmailColumnEditable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultEmailColumn(): string
+    {
+        return 'email';
+    }
+
+    /**
      * @inheritdoc
      *
      * @throws Exception
