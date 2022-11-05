@@ -1,4 +1,4 @@
-# Sprout Base Email
+# Sprout Base Lists
 
 A collection of common list classes and libraries for the Sprout Plugins Suite for Craft CMS.
 
